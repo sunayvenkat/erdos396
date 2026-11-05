@@ -1,0 +1,579 @@
+# Erdős Problem #396 — E₁ and E₂ are infinite: positive density along quadratic families (working draft)
+
+**Problem.** Is it true that for every k ≥ 0 there is an n with ∏_{i=0}^{k} (n−i) | C(2n,n)?
+
+Write E_k for the set of such n. By computer, E_k is non-empty for k ≤ 16 (OEIS A375077, 16 terms as of July 2026). Whether E_1 is infinite was open; §12 gives an unconditional proof that E₁ and E₂ are infinite (Theorems C and D), awaiting an independent line-by-line check.
+
+## 0. Results
+
+**Theorem A (conditional on Dickson's conjecture for one 4-tuple).** Put P₁ = 14x+3, P₂ = 24x+17, P₃ = 24x+5, P₄ = 7x+5. Then P₁P₂ − 2P₃P₄ = 1 identically. If x ≥ 9 and all four values are prime, then n = P₁P₂ ∈ E₁. The tuple is admissible, so Dickson's conjecture for this single tuple implies that E₁ is infinite (§11).
+
+**Theorem B (conditional on Dickson's conjecture for one 6-tuple).** Put x = 42y+9 and
+- n = 3(70x+31)(252x+113),
+- n−1 = 2(84x+37)(315x+142),
+- n−2 = 7(180x+79)(42x+19).
+If y ≥ 1 and the six linear factors are prime, then n ∈ E₂. So E₂ is infinite under Dickson's conjecture for one admissible 6-tuple, with no Conjecture G (§11).
+
+**Theorem C (E₁ is infinite; unconditional, §12).** Put n(x) = (12x−1)(22x+9), so that n−1 = 2(11x−1)(12x+5). There is a residue class x ≡ x₀ (mod M) and a constant c > 0 such that #{x ≤ X : x ≡ x₀ (mod M), n(x) ∈ E₁} ≥ cX for all large X. In particular E₁ is infinite and #(E₁ ∩ [1,N]) ≫ N^{1/2}. No prime values of the forms are needed: the argument is a first-moment (union) bound over the prime factors of the four forms, and the limiting first moment is 0.549·(2/5) + 4·0.0479 = 0.411 < 1. The family n = 2(12x+5)(35x+32), n−1 = (70x+29)(12x+11) gives 0.375.
+
+**Theorem D (E₂ is infinite; unconditional, §12).** Put n(x) = (14x−1)(15x−1), so that n−1 = x(210x−29) and n−2 = (6x−1)(35x+1). Then a positive proportion of x in a suitable residue class give n(x) ∈ E₂. The limiting first moment is 0.549·(5/6) + 6·0.0479 = 0.745 < 1.
+
+The two inputs are (i) an exact "square-class rule" for the carry at a prime q | P(x) with cofactor below q/(2|κ|) (Lemma S), and (ii) joint equidistribution of all base-q digits of n(x) over x ≡ x_q (mod q) for medium primes q (Lemma W), which is a quadratic Weyl-sum estimate because the leading coefficient of n(x_q + qt)/q in t carries a factor q. Everything else is Kummer, the Chinese remainder theorem and the prime number theorem in progressions. See §12 for statements, proofs, the complete classification of quadratic families (three squares in arithmetic progression), and numerics.
+
+These two theorems supersede Theorem 1 below: they need prime values of a few linear forms instead of Hypothesis H for 133 polynomials of degree up to about 4·10⁷. They come from agent g5 and were re-verified independently (`g/verify_g5.py`).
+
+**Theorem 1 (conditional on Schinzel's Hypothesis H).** There are infinitely many n with n(n−1) | C(2n,n). That is, E_1 is infinite.
+- The proof is an explicit construction (§8).
+- It needs a finite computation: the sign of certain Laurent coefficients for the exponents 123 and 59814755.
+- That computation is done (§8.4). All 5 pieces of n−1 and all 128 pieces of n are good.
+- 105 pieces are settled by short proofs (A1(a), (b), (d)) or by exact level-2 coefficients (A1(e)).
+- The other 28 each have an exact decisive coefficient: F(±y), the top piece of m₂, and 25 deep pieces.
+- 23 of those 28 were cross-checked independently, by agent V or by the trace formula of §5.1.
+
+**Theorem 2 (conditional on H and Conjecture G).** E_k is infinite for every k.
+- *Conjecture G:* there are infinitely many pairwise coprime odd "good" exponents m (§4).
+- More precisely, E_k is infinite under H as soon as one has k+1 pairwise coprime good exponents with all prime factors > log₂(k+1). Alternatively, k such exponents plus one coprime "Aurifeuillean-good" exponent suffice (§7).
+
+**New tools** (proved unless marked):
+- a digit criterion for carries (§4);
+- an autocorrelation formula for the top piece (§6.1);
+- an Aurifeuillean carry criterion (§7);
+- inheritance and sufficient conditions for pieces (§5).
+
+**Negative results:**
+- Lemma A (all non-top pieces are good) is false: 1365 is a counterexample.
+- Aurifeuillean splitting with a prime exponent never works.
+- At most one block member can use Aurifeuillean splitting.
+- No polynomial family under H produces new good exponents.
+
+---
+
+## 1. Kummer and the local reduction
+
+For a prime p, ν_p(C(2n,n)) equals the number of carries when adding n + n in base p, which is #{s ≥ 1 : (n mod p^s) ≥ p^s/2}.
+
+**Lemma 1.** Let q be prime, 0 ≤ i < q/2, N = n − i, q^v ‖ N with v ≥ 1, and w = N/q^v. Then ν_q(C(2n,n)) = ν_q(C(2w,w)) = ν_q(C(2N,N)).
+
+*Proof.*
+- In base q, the lowest v digits of n are (i, 0, …, 0); the digits above them are those of w.
+- Since 2i < q, the lowest v positions produce no carry.
+- So the carries of n+n are exactly the carries of w+w, and the same holds for N+N. ∎
+
+For q > 2k, at most one block member is divisible by q. The condition at q then says that the q-part of N = n−i divides C(2N,N).
+
+Verified on 49478 random cases (agent V). The hypothesis q > 2i is necessary.
+
+## 2. Small primes
+
+Let p ≤ k+1 and n ≡ k+1 (mod p^e) with e ≥ ν_p((k+1)!) + 2.
+- Then Σ_i ν_p(n−i) = ν_p((k+1)!).
+- The carries of n+n at positions ≥ e include those of ⌊n/p^e⌋ + ⌊n/p^e⌋.
+- So it suffices that ⌊n/p^e⌋ has at least ν_p((k+1)!) digits equal to p−1. For k = 1 this is automatic, because C(2n,n) is even.
+
+## 3. The family F₊
+
+Fix odd exponents m_1, …, m_{k+1}, pairwise coprime, with every prime factor > log₂(k+1). Put L = ∏ m_j.
+
+**Exponents.**
+- By the CRT, choose e_p for p ≤ k+1 with e_p ≡ ν_p(j) (mod m_j) for every j.
+- Set M_0 = ∏ p^{e_p}. Then M_0/j = c_j^{m_j}.
+
+**Polynomials.**
+- Put M = M_0 B^L, n = M + (k+1) and A_j = c_j B^{L/m_j}.
+- With j = k+1−i we get n − i = j(A_j^{m_j} + 1) = j ∏_{d|m_j} Φ_{2d}(A_j).
+
+**Irreducibility.**
+- Each Φ_{2d}(c_j B^{L/m_j}) is irreducible, by Capelli's theorem.
+- c_j is not an ℓ-th power for ℓ | L/m_j, because j'/j is not an ℓ-th power when ℓ > log₂(k+1).
+- The log₂ condition is necessary. Example (agent V): k = 7 with m_8 = 3 gives a reducible piece.
+
+**Local conditions on B.**
+- Small primes: x ↦ x^L has open image in Z_p^×, so B mod p^R can set the needed digits to p−1.
+- No fixed prime divisor: for p ≤ k+1 the product of all pieces is ≡ 1; for any other p take B ≡ 0.
+
+**Applying H.** Hypothesis H gives infinitely many B for which every piece is prime. For such B, n ∈ E_k iff every piece is *good* (§4).
+
+Pairwise coprimality is forced: if ℓ | gcd(m_j, m_{j'}), then j/j' would have to be an ℓ-th power.
+
+## 4. The carry criterion (digit form)
+
+**Setup.** Let m be odd, d | m, f = Φ_{2d}, δ = φ(d) and T = ⌊m/δ⌋. Expand in base f:
+
+  x^m + 1 = Σ_{k=0}^{T} D_k(x) f(x)^k,  with deg D_k < δ.
+
+**Theorem 4.1** (agent AC, Thm 0). Let q = f(x) be prime with q ‖ n−i = j(x^m+1). Then for all large x,
+
+  ν_q(C(2n,n)) = #{ s ∈ [1, T−1] : the last nonzero digit among D_1, …, D_s has negative leading coefficient }.
+
+So the piece is *good* (at least one carry) iff some D_k with 1 ≤ k ≤ T−1 has negative leading coefficient.
+
+*Indexing.* "Level s" is the carry of N + N at the digit position of q^{s+1}, because w = N/q. Agent V's report uses the carry exponent t = s+1.
+
+**Equivalent forms.**
+- The level-s sign is that of the first nonzero c_N, N > m − (s+1)δ, where c_N = [t^N] Φ_{2d}(t)^{−(s+1)}. Here t = 1/x, and palindromy is used.
+- The factor j does not change the sign.
+- The criterion was checked against direct Kummer computation with prime q in 12 cases; the carry counts match exactly (agent AC).
+
+**Definition.** m is *good* if every piece Φ_{2d}, d | m, is good.
+
+**Binomial reduction.** Let K = m/d, w = x^d + 1 = f·g and N = m/d. Then
+
+  tail( (x^m+1)/f^{s+1} ) = Σ_{r=1}^{s} (−1)^{r+1} C(K,r) · tail( w^r / f^{s+1} ),
+
+and [x^{−1−i}] tail(w^r/f^{s+1}) = [t^{rd−(s+1)δ+1+i}] (1+t^d)^r Φ_{2d}(t)^{−(s+1)}.
+
+So the level-s sign of the piece d inside x^m+1 needs a series of length about s·d, not m (code: `aur/deep.py`).
+
+## 5. Non-top pieces
+
+**Digit formula.** Put w = x^d + 1 = f·g and K = m/d (odd). Then
+
+  x^m + 1 = (w − 1)^K + 1 = Σ_{r=1}^{K} (−1)^{r+1} C(K,r) f^r g^r.
+
+Writing g^r = Σ_j G_{r,j} f^j (deg G_{r,j} < δ) and collecting powers of f gives D_k = Σ_{r=1}^{k} (−1)^{r+1} C(K,r) G_{r,k−r}. The expansion is unique, because deg D_k < δ.
+
+*Proof of A1(e) and A1(b).*
+- D_2 = K·G_{1,1} − C(K,2)·G_{2,0}.
+- If φ(d)/d > 1/2, then deg g = d − φ(d) < δ, so G_{1,1} = 0 and D_2 = −C(K,2)·(g² mod f). This is (e).
+- If moreover φ(d)/d > 2/3, then deg g² = 2(d − φ(d)) < δ, so g² mod f = g². Since g is monic, lc(D_2) = −C(K,2) < 0. This is (b), and it needs only T ≥ 3.
+- Similarly D_1 = K·(g mod f), and its leading coefficient is K > 0 whenever φ(d)/d > 1/2. So such pieces never carry at level 1.
+
+**A1** (agent AC; proved).
+- (a) d = 1 is good.
+- (b) φ(d)/d > 2/3 ⇒ the piece is good at level 2, because D_2 = −C(K,2)g².
+- (c) D_1 = K·(g mod f).
+- (d) d = 3 is good.
+- (e) φ(d)/d > 1/2 ⇒ D_2 = −C(K,2)(g² mod f), so the level-2 sign does not depend on K.
+
+**Counterexample to Lemma A.** For m = 1365, the piece d = 455 has digit leads 3, 387, 13812, all positive.
+- So the top piece of 1365 is good, but 1365 is not.
+- Agent V confirmed this on a 709-digit prime Φ_910(288), which has 0 carries.
+
+**Thm A3** (agent AC). For fixed squarefree d there is K_0(d) such that the piece is good for all odd K ≥ K_0(d).
+
+**5.1 Trace predictor.**
+- At a root ζ of f, L'Hôpital gives γ := g(ζ) = −H(ζ)/2, where H = (x^{2d} − 1)/Φ_{2d}. Also 1/f′(ζ) = ζH(ζ)/(2d).
+- Lagrange interpolation then gives the x^{δ−1} coefficient of D_k: (−1)^{k+1} C(K,k) Σ_ζ γ^k/f′(ζ) + O(K^{k−1}) = −(K^k/(d·k!))·a_{k+1} + O(K^{k−1}), where a_n = Tr(ζ·(H(ζ)/2)^n). This matches agent AC's Thm A3.
+- So for large K, level k is negative iff a_{k+1} > 0.
+- The sign pattern of a_n is set by the conjugate pair with the largest |H|. It oscillates with period 2π/arg H.
+- Check (`aur/trace.py`): for 9 pieces of m₂ with K ≥ 7 and exact first negative level in 3–5, the predicted first negative level was correct in all 9.
+- For d = 319865 (K = 187) the dominant pair has arg H = ±0.0577π. The prediction was "positive through level 13, negative at level 14", and the exact computation confirmed it (−1.52·10^102).
+
+**5.2 Exact low levels and effective A3 (agent g3, `code/g3/`).** Write δ = φ(d), θ = δ/d and ζ = e^{iπa/d}.
+- Closed forms (checked numerically to 10^−10): |H(ζ)| = 2∏_{q|d,q>1}|2cos(πa/2q)|^{−μ(q)}; Re(ζH′/H) = (2d−δ)/2 exactly; τ_a := Im(ζH′/H)/d = −½Σ_{q|d,q>1}μ(q)tan(πa/2q)/q.
+- **Lemma X (proved).** If (k+1)δ > (k−1)d + 1, then [x^{δ−1}]D_k = −C(K,k)·a_{k+1}/d exactly, for every odd K. Proof: a digit G_{r,j} of g^r reaches degree δ−1 only if (j+1)δ ≤ r(d−δ)+1; with r = k−j and j ≥ 1 this forces (k+1)δ ≤ (k−1)d+1.
+  - In the band ½ < θ ≤ ⅔ this covers levels k ≤ 3, and k ≤ 4 when θ > 3/5. So a band piece is good for every K ≥ 3 if a₃ > 0 or a₄ > 0, and for every K ≥ 5 if θ > 3/5 and a₅ > 0.
+  - It explains the counterexample 1365 (piece 455): the first n with a_n > 0 is 5, i.e. level 4, but T−1 = 3 when K = 3.
+- **Theorem E (effective A3; proof sketch only).** Substituting x = ζe^{w/d} and integrating on the circle |w| = k/|K+β| gives
+  S_k(K) = −(1/(d·k!)) Σ_ζ ζ(H/2)^{k+1}(K+β_ζ)^k(1+E_ζ),  β_ζ = 1/d + (k+1)(−θ/2 + iτ_ζ),
+  with |E_ζ| ≤ e√k·(exp(0.3(k+1)k²/|K+β|²) − 1) + k!·e^{|β|+0.3(k+1)}/|K+β|^k for d ≥ 10³. The real shift is the same for all ζ, so only τ and the O(k^{3.5}/K²) term affect the sign. The shifted predictor is within 0.3% of the exact values for d = 319865, K = 187, k = 2..14 (the unshifted one is off by up to 48%).
+- **Prop F (sketch).** If one conjugate pair dominates with modulus gap η and arg H(ζ₀) ∉ πZ, some n ≤ log(4δ/η)/η + 6/|sin θ₀| + 3 has a_n ≥ |z₀|^n/4. So the threshold K₀(d) is effective, but it depends on d.
+- **Why this does not give G.** If all primes are ≥ P, every band piece has ω(d) ≥ 0.405P, while its cofactor K can be a single prime. Prop F needs K ≳ (log δ/η)² with log δ of size P^C, and no uniform bounds on η, θ₀, τ over such d are known. Beyond Lemma X the sign depends on K and must be computed. The first negative level also grows with ω(d): among 3-free band d, the share with first level ≥ 5 is 0, 0.05, 0.12, 0.15 for ω = 3, 4, 5, 6. There is no parity effect.
+- Numerics: in 59814755, 46881835 and 37182145 every non-top piece is good, and the large-K predicted first level equals the actual one in 186 of 187 band pieces.
+
+**Thm I (inheritance).** Let p ∤ m be prime with p > (s+1)φ(d). Then level s of piece dp in x^{mp}+1 has the same first coefficient as level s of piece d in x^m+1.
+- So if m is good, mp is good for all large primes p.
+- Example: 165p is good for every prime p > 160, and 195p for every prime p > 192.
+- These families share primes, so they never give coprime exponents.
+
+## 6. The top piece
+
+**6.1 Autocorrelation formula.** For the top piece and T = 2, the decisive coefficient is
+
+  c_{E+1} = [y^{m−1}] Ψ_m(y)² = −Σ_i ψ_i ψ_{i+φ(m)−1},
+
+where Ψ_m = (y^m−1)/Φ_m = Σ ψ_i y^i is the inverse cyclotomic polynomial.
+- In words: m is top-good at level 1 iff the autocorrelation of the coefficients of Ψ_m at lag φ(m)−1 is positive.
+- Equivalently, c_{E+1} = (1/m)·Tr_{Q(ζ_m)/Q}(ζ Ψ_m(ζ)²).
+- Checked on 105, 165, 195, 1155 and 1365 (`aur/autocorr.py`; agent AC's `cosform.py` checks the cosine form).
+
+**6.2 Regimes.**
+- μ(m) = −1 and T ≤ E < p_min ⇒ good at the last level. More generally, Prop C1 of agent AC.
+- These need m/φ(m) to lie extremely close above an integer, a Lehmer-type condition.
+
+**6.3 No parametric shortcut.**
+- By Thm I and the two-scale formula, the sign along any family with growing primes is the sign of a fixed core.
+- m/φ(m) ≥ 2 forces the core itself to have ratio ≥ 2.
+- So Hypothesis H cannot manufacture new coprime good exponents. Goodness of the top piece is a property of specific integers.
+
+**6.4 Data.**
+- 738 of 1487 odd squarefree m ≤ 3·10^5 with φ(m)/m < 1/2 are fully good. **Needs recheck:** agent g3 found that agent AC's `fastser.py` reconstructs values by CRT from only two primes, so it is valid only while |coefficient| < 2.3·10^18; larger values can come out with the wrong sign. Two of AC's claimed K = 5 failures are false (d = 30261 is good at level 7, d = 43435 at level 5); only d = 25179 is a real K = 5 failure. The 738/1487 count and AC's full scans rest on that code.
+- Among 3-free m: 37182145 and 46881835 are bad; 50115065 and 59814755 are top-good. The exact first coefficient for 59814755 is −74322712269080.
+
+## 7. Aurifeuillean splitting for one block member
+
+Let m ≡ 3 (mod 4) be squarefree and x = m y². Then Φ_{2m}(m y²) = F(y)·F(−y) with F ∈ Z[y] irreducible of degree φ(m). Each factor has y-degree φ(m) < (deg n)/2 = m, so φ(m)/m < 1/2 is no longer needed.
+
+**7.1 Explicit F.**
+- The roots of F are χ(c)ζ_{4m}^c/√m, for c ∈ [1, 2m) coprime to 2m, where χ = (m/·) is the Jacobi symbol.
+- Power sums: c_{4m}(k)/2 for even k (Ramanujan sums) and χ(k)√m for odd k (Gauss sums).
+- Newton's identities then give F exactly (`aur/aurif3.py`).
+
+**7.2 Integrality lemma.**
+- Write F(±y) = C(x) ± m y D(x) with C, D ∈ Z[x], so that 1/F(y)^t = F(−y)^t / Φ_{2m}(x)^t.
+- Hence for every integer y, N/F(y)^t = (an integer) + T_t(y), where N = (my²)^m + 1 and T_t(y) → 0. The integer comes from polynomial parts in Z[x] and y·Z[x].
+- So F(y) gets a carry at position t iff T_t(y) < 0, for large y. Checked at random y (`aur/autocorr.py`).
+
+**7.3 The prime case fails.**
+- The odd part y·(…) of the tail dominates the even part.
+- So at each level exactly one of F(y), F(−y) carries.
+- For prime m (and for m = 3, 15, 39, …) only one level exists, or the same factor wins every level, so one factor never carries.
+- Checked for p = 3, 7, 11, 19, 23. This matches agent AC's observation on 4X⁴+1.
+
+**7.4 Composite m with two levels works.** Take m = 3q with q ≡ 1 (mod 4). The levels are t = 2, 3.
+- m = 123, 183, 267: F(y) carries at t = 2 and F(−y) carries at t = 3.
+- m = 15, 39, 51, 87, 111, 159, 219, 291: the same factor wins both levels.
+- Source: `aur/scanA.py`.
+
+**7.5 At most one block member.**
+- Aurifeuillean splitting for j needs A_j ≡ m_j (mod squares).
+- For two members j, j' and a prime P > k+1 dividing m_j m_{j'}, the exponent of P in c_j/c_{j'} is (e_P/L)(r_j − r_{j'}), which is even. It would have to be odd. So at most one j can use the splitting.
+
+## 8. Proof of Theorem 1
+
+**8.1 Data.**
+- Exponents: m_1 = 123 = 3·41 (Aurifeuillean, block member n−1) and m_2 = 59814755 = 5·7·11·13·17·19·37 (block member n).
+- Choose e with e ≡ 0 (mod 246) and e ≡ 1 (mod m_2), and set a = (e−1)/m_2.
+- Put B = 123 b², L = 123·m_2, M = 2^e B^L and n = M + 2.
+
+**8.2 Factorizations.**
+- n − 1 = A_1^{123} + 1, where A_1 = 2^{e/123}B^{m_2} = 123 y² and y = 2^{e/246}·123^{(m_2−1)/2}·b^{m_2}. With x = 123y²:
+
+  n − 1 = (x+1) · Φ_6(x) · Φ_82(x) · F(y) · F(−y).
+
+- n = 2(A_2^{m_2} + 1) = 2 ∏_{d | m_2} Φ_{2d}(A_2), where A_2 = 2^{a}·123^{123}·b^{246}.
+
+This gives 133 polynomials in b, each with positive leading coefficient.
+
+**8.3 Hypotheses of H.**
+- *Irreducibility.*
+  - Φ_{2d}(A_2): Capelli with exponent 246. At a prime above 2 the valuation is −a, with a ≢ 0 (mod 3, 41). At 3 the valuation is 123, which is odd.
+  - x+1, Φ_6(x), Φ_82(x): binomial or Capelli. The valuation at 2 is e/123 ≢ 0 mod every prime of m_2, and the square classes −1/41 and −1/123 are not squares in Q(√−3) and Q(ζ_41) respectively.
+  - F(±κ b^{m_2}): F is the minimal polynomial of a single Galois orbit. θ/κ is not an ℓ-th power for ℓ | m_2, by the valuation at a prime above 2: v = −e_𝔭·e/246, with e/246 ≡ 246^{−1} (mod ℓ).
+- *No fixed prime divisor:* b ≡ 0 (mod p) makes every piece ≡ 1 (mod p).
+
+Under H there are infinitely many b for which all 133 values are prime. Then n(n−1) = 2·(distinct large primes).
+
+**8.4 Carries.**
+- Prime 2: ν_2(n(n−1)) = 1, and C(2n,n) is even.
+- Odd primes: by Lemma 1 each piece needs one carry.
+  - x+1, Φ_6(x), Φ_82(x): A1(a), (d) and (b) respectively, good at level 2.
+  - F(y) and F(−y): carries at positions 2 and 3 respectively (§7.4).
+  - The top piece of m_2: the exact coefficient −74322712269080 is negative, so it is good at level 1.
+  - The non-top pieces of m_2: **all good**. `aur/coverage.py` classifies all 128 divisors:
+
+| class | count | reason |
+|---|---|---|
+| top piece d = m₂ | 1 | level 1, coefficient −74322712269080 (exact; agent V recomputed it via [t^N]Ψ²) |
+| φ(d)/d > 2/3 | 82 | A1(b): lc(D_2) = −C(K,2); T ≥ 3 holds for all of them |
+| ½ < φ(d)/d ≤ ⅔, lc(g² mod f) > 0 | 20 | A1(e), good at level 2 (`aur/checkB.py`) |
+| ½ < φ(d)/d ≤ ⅔, lc(g² mod f) < 0 | 25 | first negative level computed by `aur/deep.py` (below) |
+
+   The only divisor with φ(d)/d ≤ ½ is d = m₂ itself. Every proper divisor has φ(d)/d ≥ φ(m₂/37)/(m₂/37) = 0.513.
+
+   The 25 deep pieces, with first negative level s (carry at q^{s+1}) and K = m₂/d:
+
+| s | pieces d (K) |
+|---|---|
+| 3 | 385, 595, 7315, 7735, 8645, 13585, 14245, 17765, 26455, 85085, 185185 (323), 242165 (247), 286195 (209), 323323 (185) |
+| 4 | 455, 6545, 12155, 20995, 776815 (77), 1616615 (37), 8544965 (7) |
+| 5 | 95095 (629), 270655 (221), 629629 (95) |
+| 14 | 319865 (187) |
+
+  - Agent V confirmed 12 of these independently, with a different series method (`agentV/periodic.py`) and direct integer tests at x = 10^15 and 10^30:
+    - at s = 3: 385, 595, 7315, 7735, 8645, 13585, 14245, 17765;
+    - at s = 4: 455, 6545, 12155, 20995.
+  - The trace predictor of §5.1 independently agrees on 95095, 185185, 270655, 629629, 776815, 1616615, 8544965 and 319865.
+
+**8.5 What the computation rests on.**
+- Every decisive coefficient sits at offset 0 of its window. So no earlier coefficient can have been mistaken for zero.
+- **Exact certificate (`g4/exact.py`, `g4/level2.py`, `g/top_exact.py`).** Every one of the 128 pieces is now certified with exact integer arithmetic; nothing rests on a probabilistic stopping rule.
+  - The 25 deep pieces: the offset-0 coefficient X = [x^{φ(d)−1}]D_s is computed as an exact big integer (python-flint), using Φ_n^{−(s+1)} = (−1)^{s+1}Ψ_n^{s+1}(1−t^n)^{−(s+1)} and the binomial reduction of §5. All 25 values are negative and agree digit for digit with `strict_out.txt`. A self-check asserts X = [x^{φ−1}]D_s against direct base-f expansion for every d | m with m = 105 (s ≤ 30), 1155 (s ≤ 12) and 15015 (s ≤ 5).
+  - Independent cross-check: |[t^j]Φ_n^{−(s+1)}| ≤ h^{s+1}C(j+s, s) with h = height(Ψ_n) gives an a priori bound B ≥ |X|. CRT over primes with product > 2B then determines X without the flint values; it agrees in all 25 cases. For d = 319865 this needs 14 primes (log₁₀B = 125.2), so the 13-prime acceptance of `strict.py` was not by itself rigorous, though its value was right.
+  - The 20 A1(e) pieces: g = −Ψ_d(−x) is recomputed exactly, g·f = x^d + 1 is checked, and R = g² mod f has deg R = φ(d) − 1 and lc(R) > 0 in every case.
+  - The 82 A1(b) pieces need no numerics: 3φ(d) > 2d and T ≥ 3 are checked in integers.
+  - The top piece: [t^{ρ+1}]Φ_{2m₂}(t)^{−2} with ρ = 95075, by exact integer series over the divisors e ≤ ρ+1 of m₂, equals −74322712269080.
+- Remaining trust: python-flint's polynomial arithmetic, and Thm 4.1 with the binomial reduction (the self-check tests the reduction only for small m).
+- The sign-to-carry rule (Thm 4.1) was checked against direct Kummer counts with prime q in 12 cases (agent AC). Agent V tested it at large x for every piece of 15, 105, 165 and 195.
+
+## 9. Conjecture G and all k
+
+**Conjecture G.** For every P there is a good odd m whose prime factors all exceed P.
+
+G implies infinitely many pairwise coprime good m, and hence Theorem 2. Evidence: about 50% of eligible m are fully good in every range tested.
+
+G is also necessary for this method: pairwise coprime exponents can share no prime, so all but finitely many of them have every prime factor above any fixed P. Every exponent needs m/φ(m) ≥ 2, because a piece of degree more than half of deg(n−i) has a single cofactor digit below f/2. With all primes above P this forces about P²/(2 log P) prime factors.
+
+**9.1 Localization (`g/crossing.py`, `g1/verify.py`).** Write A_n(t) = Φ_{2n}(t) = ∏_{e|n}(1+t^e)^{μ(n/e)} for odd n.
+- L1. For a prime p ∤ n, A_{np}(t) = A_n(t^p)/A_n(t). Hence [t^N]A_{np}^{−k} = [t^N]A_n^{k} for N < p. Iterating, the coefficients below the smallest prime of m_> depend only on m_≤ and on the parity of ω(m_>).
+- L2. For m = Mq with q ∤ M prime, and N < m: [t^N]Φ_{2m}^{−2} = (−1)^N[y^N]Φ_M(y)²Ψ_M(y^q)². Checked against the direct series for M = 15, 21, 33, 35, 39 and 255.
+- L3 (crossing prime). Let M/φ(M) < 2, δ = 2φ(M) − M, and let q be a prime in (2φ(M)/(δ+1), 2φ(M)/δ]. Then m = Mq has T = 2 and ρ = m − 2φ(m) = 2φ(M) − qδ ∈ [0, q). The top piece of m is good iff the first nonzero coefficient of Φ_{2M}(t)² at an index > ρ is negative. The same holds for general T with δ_T = Tφ(M) − M.
+- Inflation. If T(M) = 2 and q > 2φ(M) is prime with T(Mq) = 2, the decisive top coefficient of Mq equals that of M; only its offset moves (`g/inflate.py`, 8 cases). So adding a large prime never changes the top piece.
+
+**9.2 Theorem W (agent g1).** Let T = 2, ρ = m − 2φ(m), let Q be the set of primes of m and p₁ < p₂ the two smallest. Then mod t^{p₁p₂}, Φ_{2m}^{−2} ≡ (1+t)^{−2μ(m)}∏_{q∈Q}(1+t^q)^{2μ(m)}.
+- (i) μ(m) = −1: for 3 ≤ N ≤ 2p₁−1, c_N = −2(1_Q(N) + 2·1_Q(N−1) + 1_Q(N−2)) ≤ 0. So the top piece is good whenever 3 ≤ ρ ≤ p₁. ρ = 1 is bad, because c_2 = 1.
+- (ii) μ(m) = +1 and ρ ≤ 2p₁−3: c_{ρ+1} = (ρ+2) − 2Σ_{q≤ρ+1}(ρ+2−q). So the top piece is bad for ρ ≤ p₁−2.
+- Last-level rule for non-top pieces (r = m mod φ(d), r+1 < p₁(d)): μ(d) = +1 gives c_{r+1} = (−1)^{r+1}C(r+T_d, T_d−1); μ(d) = −1 gives C(T_d, r+1) > 0 if T_d > r, and first nonzero c_{p₁(d)} = −T_d if T_d ≤ r. Since ρ is odd and T_d ≥ 2(p₁−1) > ρ for d < m, every proper piece is bad at its last level. Near-Lehmer m rescue only the top piece.
+- Checks: 9365 cases of (i)/(ii) and 4110 cases of the last-level rule against exact series, plus 376 direct base-f digit checks; no mismatch.
+
+**9.3 Reduction.** G(P) follows from NL(P) and Band:
+- NL(P): an odd squarefree m with all primes > P, μ(m) = −1, m/φ(m) > 2, and 3 ≤ m − 2φ(m) ≤ p₁(m).
+- Band: every piece with ½ < φ(d)/d ≤ ⅔ is good. (Pieces with φ(d)/d > ⅔ are good by A1(b), since T_d ≥ 8 under NL.)
+- Necessary condition for NL: if p, q | m and p | q−1, then p | ρ. So ρ < p₁ forbids every such pair, as in Lehmer's totient problem. Also m ≡ ρ (mod 2^{ω(m)+1}).
+
+**9.4 Why NL is out of reach.**
+- Searches (agent g1). P = 3, m ≤ 10^15: 20 values with ρ ≤ 10^6, the smallest ρ = 84875; 12 of the 20 are top-good. P = 5, m ≤ 10^26: smallest ρ = 679213406106576341.
+- A random-squarefree model (exact DP over primes) predicts about A_P·X·ln Y P-rough m ≤ Y with 0 < ρ ≤ X, with A_3 = 1.8·10^−6, A_5 = 4.1·10^−18, A_7 = 5.2·10^−41, A_11 = 6.9·10^−71. It matches the P = 3 search (31 predicted, 20 found). The first m with ρ ≤ 2p₁ is expected near 10^{2.4·10^4} for P = 3 and 10^{7.6·10^15} for P = 5.
+- Greedy prime chains M → Mp keep δ = 2φ(M) − M near φ(M)^θ, where θ is the prime-gap exponent. L3 needs a prime in an interval of length about 2φ/δ², so it works for θ < (3−√5)/2 ≈ 0.382. That holds under Cramér's conjecture but is not known even under RH. Adding several primes per step does not help: the count of solutions stays about φ(M)/δ².
+- No existence theorem is known for composite n with n − kφ(n) small and positive (only upper bounds: Pomerance; Banks–Luca; Banks–Güloğlu–Nevans; Luca–Pomerance). Subset-product methods give multiplicative conditions such as λ(n) | n−1, which cannot hit the additive equation n − 2φ(n) = ρ.
+- So NL(P) is a Lehmer-strength problem, probably harder than G itself. G needs a mechanism for the sign of the top coefficient of huge m that does not go through near-integrality of m/φ(m).
+
+**9.5 Bulk analysis of the top piece (agent g2, `code/g2/`).**
+- Ramanujan form: Φ_m(y)^{−1} = exp(Σ_n c_m(n)y^n/n) with c_m the Ramanujan sum; log Q_1 ≡ Σ_{N<m} c_m(N)y^N/N mod y^m.
+- All levels at once: with a_s = [x^{φ−1}]D_s the offset-0 coefficient of level s,
+  S(z) = Σ_s a_s z^s = [y^{m+1−φ}] 1/(Φ_m(y) − z·y^φ) = Σ_{Φ_{2m}(x)=z} (x^m+1)/Φ′_{2m}(x).
+  The series form is checked for five m; the root-sum form only for φ ≤ 96. For T = 2, S(z) = a_1·z (since a_2 = 0 unless m = 3φ−1).
+- T = 2 cosine form: a_1 = −(1/2π)∫|Ψ_m(e^{iθ})|² cos((φ−1)θ) dθ. It agrees with §6.1.
+- **Peak lemma (proved).** Let χ be the even real character mod q for q = 8, 10 or 12, and suppose χ(p) = −1 for every p | m (p ≡ ±3 mod 8, p ≡ ±2 mod 5, or p ≡ ±5 mod 12 respectively). Then
+  log|Ψ_m(ζ_q^b)| = χ(b)(−1)^r 2^r B_q + log|1 − ζ_q^{bm}|,  r = ω(m),
+  with B_8 = ½ log(1+√2), B_10 = log((1+√5)/2), B_12 = ½ log(2+√3). Proof: a ↦ log|1 − ζ_q^{ab}| is even on (Z/q)^×, so only χ_0 and χ occur, and Σ_{e|m}μ(m/e)f(e) = ∏_{p|m}(f(p) − 1) for completely multiplicative f. So |Ψ_m| has a doubly exponential peak at q-th roots of unity, not tied to any core.
+- Numerically the integral localizes: windows of ±0.02 turns around the peak roots reproduce the bulk coefficients of Q² (sign agreement 96.8%, 99.9%, 100% for q = 8 and r = 4, 5, 6). A Gaussian saddle at the peak predicts the level-1 sign in 6 of 7 test cases, including the top-good m = 43730115 = 3·5·11·13·19·29·37 (exact a_1 = −3.602·10^41).
+- Negative results. There is no top-piece trace predictor (K = 1 gives no large parameter). There is no exponential saddle (Re(yQ′/Q) = D/2 on |y| = 1). The sum rules Σ D_k(±1) constrain digit values, not leading coefficients.
+- Open: a rigorous bound |Ψ_m| ≤ exp((1−ε)B_q 2^r) away from the peaks, and the sign of the localized integral. Its phase depends on the large divisors m/p and looks equidistributed, so about half of each family should be top-good, but nothing forces it.
+
+## 10. Reproducibility
+
+All scripts and outputs are in `erdos396/code/`. Run them from inside their own folder; they import `../agentV/fastgood.py` and `../poly.py`.
+
+| file | purpose |
+|---|---|
+| `aur/aurif3.py` | exact Aurifeuillean factor F for squarefree m ≡ 3 mod 4 (Newton identities in Q(√m)) |
+| `aur/scanA.py` | carry levels of F(±y) for m = 3q; shows both factors carry for m = 123, 183, 267 |
+| `aur/autocorr.py` | top-piece autocorrelation identity; integrality of the F(±y) quotient at random y |
+| `aur/checkB.py` → `checkB_out.txt` | A1(e) level-2 test for all band pieces of 59814755 and 50115065 |
+| `aur/deep.py` → `deep_out{1,2,3}.txt` | exact first negative level via the binomial reduction plus CRT |
+| `aur/levels.py` → `lev319865.txt` | level-by-level scan of d = 319865 |
+| `aur/trace.py` | large-K trace predictor (§5.1) |
+| `aur/coverage.py` | audit: every divisor of m₂ is accounted for |
+| `aur/strict.py` → `strict_out.txt` | strict CRT recheck of the 25 decisive coefficients |
+| `agentAC/`, `agentV/`, `agentU/` | agents' reports (REPORT.md) and code |
+| `g/crossing.py`, `g/LEMMAS.txt` | localization L1, two-scale L2, crossing prime L3 (§9.1) |
+| `g/top_exact.py`, `g/inflate.py` | exact top coefficient of m₂; reflection, trace and inflation checks |
+| `g/verify_g5.py` | independent check of Theorems A and B (§11) |
+| `g1/` | near-Lehmer route: Theorem W, last-level rule, searches, heuristic (§9.2–9.4) |
+| `g2/` | bulk analysis of the top piece, peak lemma (§9.5) |
+| `g3/` | Lemma X, effective A3, float residue method `resid.py`, band surveys (§5.2); `RESULTS.txt` |
+| `g4/exact.py`, `g4/level2.py` | exact certificate of all 127 non-top pieces of m₂ (§8.5) |
+| `g5/` | linear-form families for E₁ and E₂ (§11) |
+
+**Witnesses** (agent V; checked with Miller–Rabin, Pollard–Brent and a Kummer/Legendre cross-check):
+- n = 2^35 + 2 = 34359738370 ∈ E_1. It comes from the F₊ family with (m_1, m_2) = (35, 17) and B = 1, and is the smallest F₊ member of E_1 up to 10^18.
+- 481469424205826 ∈ E_1, from (5, 3) with B = 6.
+- 2251799813685250 ∈ E_1, from (3, 5) with B = 8.
+- 2·54^17 + 3 ∈ E_2.
+
+**Fallback exponents.** 50115065 = 5·7·11·13·17·19·31 is top-good. It has a K = 5 band piece (d = 10023013). Agent g3 settled it with exact `deep.py`: levels 2–6 are positive and level 7 = T−1 is −3.2993·10^60, re-checked at two further primes, so the piece is good at its last level even though a₃, …, a₈ < 0. All 46 band pieces of 50115065 are then good, but 45 of them rest only on g3's floating-point residue method (`g3/resid.py`); they still need an exact check before 50115065 can be used. The alternatives 183 = 3·61 and 267 = 3·89 for m_1 also have both Aurifeuillean factors carrying.
+
+## 11. Linear-form families: E₁ and E₂ from Dickson's conjecture
+
+The principle: a prime f with f ∥ n−i, f > 2i and n−i = f·C gives base-f digits of n equal to i followed by the digits of C. There is a carry iff some digit is ≥ f/2. If C < f this means C ≥ f/2; if f < C < 2f it means C − f ≥ f/2. So a prime near √n is harmless when its cofactor has the right size. When f and C are linear in x with ratio R = lc(C)/lc(f), the condition is R ∈ [½, 1) or frac(R) ≥ ½, with the boundary cases decided by the constant terms. No cyclotomic structure and no Conjecture G is needed.
+
+**Lemma Q (unconditional).** Let p < q and p′ < q′ be odd primes with pq − 2p′q′ = 1, 3p ≤ 2q < 4p, and 13p′ ≤ 4q′ < 14p′. Then n = pq ∈ E₁. (Agent g5 stated it without the upper bound 2q < 4p; the base-q step needs it.)
+
+*Proof.* ν₂(n(n−1)) = 1 and C(2n,n) is even. Every odd prime factor of n(n−1) is one of p, q, p′, q′, each to the first power, and each exceeds 2. By Kummer it suffices to find one carry of n+n in each base.
+- Base p: q = p + (q−p) with p/2 ≤ q−p < p, so n has the digit q−p ≥ p/2.
+- Base q: n = p·q with q/2 ≤ p < q.
+- Base q′: n = 1 + 2p′·q′ with q′/2 ≤ 2p′ < q′.
+- Base p′: n = 1 + 2q′·p′ and 2q′ = 6p′ + r with p′/2 ≤ r < p′. ∎
+
+**Proof of Theorem A.** The identity P₁P₂ − 2P₃P₄ = 1 is checked by expansion. For x ≥ 9 the inequalities of Lemma Q hold with (p, q, p′, q′) = (P₁, P₂, P₄, P₃): 3P₁ ≤ 2P₂ always; 2P₂ < 4P₁ iff x ≥ 3; 13P₄ ≤ 4P₃ iff x ≥ 9; 4P₃ < 14P₄ always. Admissibility: the forms have no common zero mod 2 (x ≡ 0), mod 3 (x ≡ 2) or mod 5 (x ≡ 1, 4), and four forms cannot cover all residues mod a prime ≥ 5 other than 5 (mod 5 they exclude only 0, 2, 3). So Dickson's conjecture gives infinitely many x with all four prime. Hardy–Littlewood would give ≫ X^{1/2}/log⁴ X elements of E₁ up to X. Agent g5 found 12 such quadruple families with leading coefficient ≤ 600. ∎
+
+**Proof of Theorem B.** The identities n − (n−1) = 1 and n − (n−2) = 2 are checked by expansion.
+- Prime 2: x is odd, so n is odd and n−1 = 2·(odd)(odd); ν₂ = 1 and C(2n,n) is even.
+- Prime 3 (exactly divides n): the congruence x ≡ 9 (mod 42) forces the base-3 digit 2 at position 1 of n, a carry.
+- Prime 7 (exactly divides n−2, and 7 > 4): the base-7 digit at position 1 of n is 4 ≥ 7/2, a carry.
+- The six large primes, with cofactor C and f:
+  - f = 70x+31, C = 756x+339: C − 10f = 56x+29 ≥ f/2.
+  - f = 252x+113, C = 210x+93 ∈ [f/2, f).
+  - f = 84x+37, C = 630x+284: C − 7f = 42x+25 ≥ f/2 (the ratio is exactly 7.5, so the constant terms decide).
+  - f = 315x+142, C = 168x+74 ∈ [f/2, f), since 336x+148 ≥ 315x+142.
+  - f = 180x+79, C = 294x+133: C − f = 114x+54 ≥ f/2.
+  - f = 42x+19, C = 1260x+553 = 29f + (42x+2) with 42x+2 ≥ f/2 for x ≥ 1 (the ratio is exactly 30).
+- All other digits (the low digits 0, 1, 2 and the top digits) are below f/2 and do not matter. ∎
+
+**Checks.**
+- Agent g5: all 265 x < 10⁶ with four primes give n ∈ E₁ (Theorem A), and all 11 y < 3·10⁵ with six primes give n ∈ E₂ (Theorem B). The smallest Theorem B value is n = 9322443046715199. C(2n,n) ≡ 0 mod n(n−1) was checked directly for n = 10462547.
+- Independent re-check (`g/verify_g5.py`, sympy factorizations of n, n−1, n−2 and carry counts): 22 of 22 four-prime x in [9, 20000) give n ∈ E₁; the first three six-prime y (9993, 55110, 64073) give n ∈ E₂.
+
+**Limits.**
+- Each of n and n−1 needs at least two large primes, because a single prime factor above √(2n) has no carry. So four forms is the minimum for E₁, and Bunyakovsky for one polynomial cannot suffice.
+- For quadratic n, n−i splits over Q iff disc(n) + 4·lc(n)·i is a square. For k ≥ 3 this needs four squares in arithmetic progression, which Fermat ruled out. So E₃ needs n of degree ≥ 3 with four reducible shifts; agent g6 is searching for such identities.
+- The weakest hypothesis found for E₁ is "Hypothesis Q": infinitely many prime solutions of pq − 2p′q′ = 1 in the cone of Lemma Q (prime points on a rank-4 quadric, equivalently 2×2 matrices of determinant 1 with prime entries and a doubled corner). We do not know an unconditional result of this kind; circle methods would need about eight prime variables.
+- Not checked: whether Theorems A and B are already in the literature.
+- Unconditional routes examined by g5 and rejected: positive density of E₁ (empirical density 0.0126 up to 2·10⁶, but D₀ lacks the stability that Hildebrand–Teräväinen methods need); Chen-type almost-primes (parity barrier, uncontrolled digit events); Maynard–Tao (a good quadruple is fixed by three of its forms, so independent sets of size ≫ K^{1/3} avoid them).
+
+## 12. Positive density along quadratic families (agent h1)
+
+### 12.0 Summary
+
+Let n(x) = λ₀P₁(x)P₂(x) with P_j = a_jx + b_j, and suppose n − i = λ_i P_{2i+1}P_{2i+2} for i = 1, …, k with linear forms over ℤ. Fix a large constant z₀ and a class x ≡ x₀ (mod M), M = ∏_{q ≤ z₀} q^{e_q}, on which no prime q ≤ z₀ divides any P_j(x) except as forced by the λ's, and with the forced 2-adic and small-prime carries built in. Then n(x) ∈ E_k iff for every prime q > z₀ dividing some P_j(x) the number of carries of n(x)+n(x) in base q is at least ν_q(∏(n−i)). The theorem of this section is a first-moment bound:
+
+  #{x ≤ X in the class : n(x) ∉ E_k} ≤ (M_∞ + o(1)) · #{x ≤ X in the class},   M_∞ = 0.549·Σ_j f_j + 0.0479·(number of forms),
+
+where f_j ∈ [0,1] is an explicit "failure fraction" of the form P_j computed from (a_j, b_j, the partner form, λ). If M_∞ < 1, a positive proportion of x in the class give n(x) ∈ E_k. For the families of Theorems C and D, M_∞ = 0.411 (resp. 0.375 for the second E₁ family) and 0.745.
+
+The three regimes for a prime q | P_j(x), with cofactor c = P_j(x)/q and L = ⌊log(2n)/log q⌋:
+- **Top (L ≤ 3, equivalently q ≳ √P_j):** the carry at the second digit is decided by the square class of q modulo a_j (Lemma S). The failing square classes have proportion f_j. The third digit (present iff L = 3) is a fair coin.
+- **Medium (L ≥ 4, z₀ < q ≲ √P_j):** all L−1 relevant digits of n in base q are jointly equidistributed over x ≡ x_q (mod q) (Lemma W). The failure probability is 2^{1−L}.
+- **Small (q ≤ z₀):** removed by the residue class (admissibility).
+
+Agent h1's code is in `code/h1/`: `search2.py` (quadruple search ranked by Σf_j), `apsq.py` (complete enumeration of quadratic families via squares in arithmetic progression), `verify.py`, `ek.py`, `trend.py`, `sample.py` (brute force and sampled E₁/E₂ proportions), `lawcheck.py`, `rulecheck.py`, `detect.py` (tests of Lemma S and of the digit laws at x ≈ 10¹⁵).
+
+### 12.1 Coins
+
+For an odd prime q and n ≥ 1, Kummer gives ν_q(C(2n,n)) = #{s ≥ 1 : ⌊2n/q^s⌋ odd}. Call the parity of ⌊2n/q^s⌋ the *coin at level s*; "heads" is a carry. Let q ∥ n − i with 0 ≤ i ≤ k and q > 2k, write n − i = qm. Then ⌊2n/q⌋ = 2m + ⌊2i/q⌋ = 2m is even (this is Lemma 1 of §1: the first coin is always tails), and for s ≥ 2
+
+  ⌊2n/q^s⌋ = ⌊2m/q^{s−1} + 2i/q^s⌋ = ⌊2m/q^{s−1}⌋,
+
+because 2m/q^{s−1} has denominator q^{s−1} and 2i/q^s < 1/q^{s−1}. So the coin at level s is heads iff (m mod q^{s−1}) ≥ q^{s−1}/2 iff the base-q digit d_{s−2}(m) exceeds (q−1)/2, or equals (q−1)/2 with the lower part large. If q^{L−1} ≤ 2m < q^L there are exactly L−1 coins, at levels 2, …, L, and n ∉ E_k because of q iff all are tails (when ν_q = 1). The coin at level L is the parity of the leading digit of 2m; call it the *top coin*.
+
+### 12.2 Lemma S: the square-class rule for large primes
+
+**Lemma S.** Let P = ax + b, P′ = a′x + b′ with gcd(a,b) = gcd(a′,b′) = 1, κ = ab′ − a′b ≠ 0, λ ≥ 1, and let q be a prime with q ∤ aλκ, q | P(x), c = P(x)/q, and 2|κ|c < q. Put u = q̄² (mod a) where q̄q ≡ 1 (mod a), and r = (−λκbu) mod a ∈ {0, …, a−1}. Then the coin at level 2 of n with n − i = λP(x)P′(x), q ∥ n − i, is heads iff
+
+  2r > a, or (2r = a and λκ > 0), or (r = 0 and λκ < 0).
+
+In particular the outcome depends only on the square class of q modulo a. Define f(P; P′, λ) = (number of squares of units u mod a for which the rule fails)/(number of squares of units mod a); for a = 1 read u = 0.
+
+*Proof.* Here m = λcP′(x). Since ax ≡ −b (mod q), P′(x) ≡ (a′(−b) + ab′)/a = κ/a (mod q), so the level-2 coin is decided by the digit d = (λcκ·a^{−1}) mod q, heads iff d > q/2. Write ad = λcκ + ρq with ρ ∈ ℤ determined by 0 ≤ d < q: ρ ≡ −λcκ q^{−1} (mod a). Now c ≡ Pq^{−1} ≡ bq^{−1} (mod a), so ρ ≡ −λκbq̄² = r (mod a). Set g = λcκ/q, so |g| < 1/2 by hypothesis. If λκ > 0 then g ∈ (0, ½), the window for ρ is (−g, a−g), so ρ = r, and d > q/2 iff r + g > a/2 iff 2r > a or (2r = a, since g > 0). If λκ < 0 then g ∈ (−½, 0), the window is (|g|, a+|g|), so ρ = r if r ≥ 1 and ρ = a if r = 0; the condition is ρ − |g| > a/2, i.e. 2r > a (as |g| < ½ and r integer), or r = 0 (then ρ = a and a − |g| > a/2). ∎
+
+Remarks. (1) Since c ≡ bq^{−1} (mod a), the square class of q is a function of c mod a; the rule says which residue classes of the cofactor c are bad. (2) For q with q² > 2λP(x)P′(x) only level 2 exists, so the rule decides membership; for the next range (L = 3) a second coin exists. (3) If moreover 2n < q², i.e. the form has leading coefficient above √(2λ₀a₁a₂), such a q has no coin at all and n ∉ E_k; this happens for a proportion ≍ 1/log x of x and is part of the o(1). (4) The rule was checked against the actual carries at x ≈ 10⁹, 10¹², 10¹⁵ for the two families: 3568/3568 and 5696/5696 agreements at 10¹⁵ (`detect.py`).
+
+Which a admit f = 0? The values −λκbu run over a coset of the subgroup of squares in (ℤ/a)^×, possibly multiplied by a non-unit; f = 0 iff that coset lies in (a/2, a). For (ℤ/a)^× of exponent 2 (a | 24) the squares are {1} and any single residue > a/2 works. Among a ≤ 60 the admissible values are 1, 2, 3, 4, 6, 8, 9, 12, 15, 16, 18, 20, 21, 24, 27, 28, 30, 32, 33, 36, 39, 40, 42, 44, 45, 48, 51, 52, 54, 56, 57, 60. For E₁ the complete enumeration (12.5) shows min Σf_j = 1/3 over all admissible quadruple families with λ₀a₁a₂ ≤ 3000; no family has Σf_j = 0.
+
+### 12.3 Lemma W: medium primes
+
+**Setting.** Fix a form P = ax + b dividing n − i (0 ≤ i ≤ k), its partner P′ = a′x + b′ and multiplier λ, so n − i = λPP′; put κ = ab′ − a′b ≠ 0. All leading coefficients are positive. Let q be a prime with q ∤ 2aa′λκ, q > 2k and q > z₀, where z₀ exceeds every prime dividing a resultant of two of the forms. Then q | P(x) iff x ≡ x_q (mod q), 0 ≤ x_q < q. Let X be large, T = X/q, and for x ∈ (X/2, X] write x = x_q + qt; t runs over an interval of length T/2 that we write as (T/2, T] (the shift by x_q/q < 1 changes nothing below). Put c₀ = P(x_q)/q, β = P′(x_q) and
+
+  m(t) = (n − i)/q = λ(c₀ + at)(β + a′qt) = λaa′q·t² + λ(aβ + a′c₀q)·t + λc₀β.
+
+(W1) *Bijection.* aβ = aa′x_q + ab′ ≡ −a′b + ab′ = κ (mod q). Hence m′(t) ≡ λκ ≢ 0 (mod q) for every t, and t ↦ m(t) is a bijection of ℤ/q^j for all j ≥ 1 (induction on j: m(t + q^{j−1}s) ≡ m(t) + q^{j−1}s·m′(t) (mod q^j)). So Σ_{t mod q^j} e(h m(t)/q^j) = 0 when q^j ∤ h, and for every interval I, |Σ_{t∈I} e(h m(t)/q^j)| ≤ min(|I|, q^j).
+
+(W2) *Gained level.* For q ∤ h the phase h·m(t)/q^j is a real quadratic polynomial in t whose leading coefficient hλaa′/q^{j−1} is a reduced fraction with denominator q^{j−1}.
+
+(W3) *Size.* For X ≥ X₀(forms) and x ∈ (X/2, X] one has aX/3 ≤ P(x) ≤ 2aX and a′X/3 ≤ P′(x) ≤ 2a′X. Hence λaa′qT²/9 ≤ m(t) ≤ 4λaa′qT², m is increasing, m(T/2) ≥ m(T)/8, and m′(t)/m(t) = aq/P(x) + a′q/P′(x) ∈ [1/(2T), 6/T].
+
+**Coins as a box.** By 12.1 the coin at level s ≥ 2 is tails iff the digit d_{s−2}(m) is ≤ (q−1)/2 iff {m/q^{s−1}} < ρ := (q+1)/(2q). Define L by q^{L−1} ≤ 2m(T) < q^L and J = L − 1. For every t in the range 2m(t) < q^{J+1}, so coins at levels above J+1 are vacuously tails, and "n(x) has no carry in base q" is exactly
+
+  y(t) := ({m(t)/q}, {m(t)/q²}, …, {m(t)/q^J}) ∈ 𝔅 := [0, ρ)^J.
+
+Put F = 2m(T)/q^{L−1} ∈ [1, q), the leading digit of 2m at the top of the range. Note ρ^J = 2^{1−L}(1 + 1/q)^{L−1} = 2^{1−L}(1 + O(L/q)). By (W3), q^L > 2m(T) ≥ 2λaa′qT²/9 and T ≥ q^{1+4ε} when q ≤ X^{1/2−ε}, so L ≥ 4 for large X: the medium regime is exactly L ≥ 4.
+
+**Lemma W.** Fix ε ∈ (0, 1/10) and put η = ε/32. There are C₄ = C₄(forms) and X₀ = X₀(ε, forms) such that for X ≥ X₀ and every prime q as above with z₀ < q ≤ X^{1/2−ε}, writing B_q = #{t ∈ (T/2, T] : y(t) ∈ 𝔅}:
+
+(a) if q ≥ exp((log X)^{3/4}), then |B_q − ρ^J·T/2| ≤ ρ^J·(T/2)·(C₄/F + q^{−η});
+
+(b) if q < exp((log X)^{3/4}), then B_q ≤ ρ^{J′}·T/2 + T^{1−ε}, where J′ = ⌊(1−ε) log T/ log q⌋ ≤ J.
+
+**Two standard inequalities.**
+
+(ET) *Erdős–Turán–Koksma* (Drmota–Tichy, Sequences, Discrepancies and Applications, Thm 1.21). For y_1, …, y_N ∈ [0,1)^d and any integer H ≥ 1, the discrepancy D_N of the point set with respect to boxes satisfies
+
+  D_N ≤ (3/2)^d ( 2/(H+1) + Σ_{0<‖h‖_∞≤H} r(h)^{−1} |N^{−1} Σ_{t≤N} e(h·y_t)| ),  r(h) = ∏_{j≤d} max(1, |h_j|),
+
+and #{t : y_t ∈ box} = N·vol(box) + θ·N·D_N with |θ| ≤ 1. Also Σ_{0<‖h‖_∞≤H} r(h)^{−1} ≤ (3 + 2 log H)^d.
+
+(Wq) *Weyl, quadratic case.* If α = u/Q with gcd(u, Q) = 1 and Q odd, then for every interval I of length N ≥ 1 and all real β₁, γ₁,
+
+  |Σ_{t∈I} e(αt² + β₁t + γ₁)| ≤ C₅·N·(log 2Q)^{1/2}·( Q^{−1/2} + N^{−1/2} + Q^{1/2}N^{−1} ),
+
+with an absolute constant C₅. Proof: |S|² = Σ_{|h|<N} Σ_{t∈I∩(I−h)} e(2αht + αh² + β₁h) ≤ N + 2Σ_{h=1}^{N} min(N, 1/(2‖2αh‖)); as 2α = 2u/Q with gcd(2u, Q) = 1, Vaughan's Lemma 2.2 gives Σ_{h≤N} min(N, ‖2αh‖^{−1}) ≤ 4(N/Q + 1)(N + Q log Q), whence |S|² ≪ N²/Q + N log 2Q + Q log 2Q. ∎
+
+**Exponential sums.** For 1 ≤ j ≤ J, an integer h′ with q ∤ h′, and an interval I ⊂ (T/2, T] of length N, put E_j(h′; I) = Σ_{t∈I} e(h′m(t)/q^j). By (W1), |E_j| ≤ q^j. For j ≥ 2, (W2) and (Wq) with Q = q^{j−1} (odd, reduced since q ∤ h′λaa′) and log 2Q ≤ log 2m(T) ≤ 2 log X give
+
+  |E_j(h′; I)| ≤ min( q^j, C₅N(2 log X)^{1/2}( q^{−(j−1)/2} + N^{−1/2} + q^{(j−1)/2}/N ) ).
+
+**Claim 1.** Let X ≥ X₀, q ≥ exp((log X)^{3/4}), and let I ⊂ (T/2, T] have length N ≥ Tq^{−ε}/8. Then for all 1 ≤ j ≤ J−1, and also for j = J when I = (T/2, T] and F ≥ q^ε,
+
+  |E_j(h′; I)| ≤ C₆·N·(log X)^{1/2}·q^{−ε/4},  C₆ = C₆(forms).
+
+*Proof.* Recall T ≥ q^{1+4ε}. If q^j ≤ Nq^{−ε/4}, use |E_j| ≤ q^j; this covers j = 1, since q ≤ Nq^{−ε/4} follows from N ≥ Tq^{−ε}/8 ≥ q^{1+3ε}/8. Otherwise j ≥ 2 and Q = q^{j−1} > Nq^{−1−ε/4} ≥ Tq^{−1−5ε/4}/8 ≥ q^{11ε/4}/8, so Q^{−1/2} ≤ 3q^{−11ε/8}; also N^{−1/2} ≤ (8q^ε/T)^{1/2} ≤ 3q^{−1/2}. For the last term: if j ≤ J−1 then Q ≤ q^{L−3} = 2m(T)/(Fq²) ≤ 8λaa′T²/q by (W3) and F ≥ 1, so Q^{1/2}/N ≤ (8λaa′)^{1/2}·T·q^{−1/2}·8q^{ε}/T ≤ 8(8λaa′)^{1/2}q^{−1/4}. If j = J, N = T/2 and F ≥ q^ε, then Q = q^{L−2} = 2m(T)/(Fq) ≤ 8λaa′T²/F, so Q^{1/2}/N ≤ 2(8λaa′/F)^{1/2} ≤ 6(λaa′)^{1/2}q^{−ε/2}. In all cases the bracket in (Wq) is ≤ C q^{−ε/4}. ∎
+
+**Claim 2 (box count on an interval).** Let X ≥ X₀, q ≥ exp((log X)^{3/4}), d ∈ {J−1, J}, and I ⊂ (T/2, T] of length N ≥ Tq^{−ε}/8; if d = J assume I = (T/2, T] and F ≥ q^ε. Then
+
+  #{t ∈ I : ({m(t)/q^j})_{j≤d} ∈ [0,ρ)^d} = ρ^d N + θ·3N·q^{−ε/16},  |θ| ≤ 1.
+
+*Proof.* Apply (ET) with H = ⌊q^{ε/8}⌋ < q/2. For 0 < ‖h‖_∞ ≤ H write j₀ = max{j : h_j ≠ 0}. Then h·y(t) = m(t)·Σ_j h_j q^{d−j}/q^d = h′m(t)/q^{j₀} with h′ = Σ_{j≤j₀} h_j q^{j₀−j} ≡ h_{j₀} ≢ 0 (mod q), because 0 < |h_{j₀}| < q. So Σ_{t∈I} e(h·y(t)) = E_{j₀}(h′; I), and Claim 1 applies (j₀ ≤ d). Hence
+
+  N·D_N ≤ (3/2)^d·2N/(H+1) + (3/2)^d(3 + 2 log H)^d·C₆N(log X)^{1/2}q^{−ε/4}.
+
+Now d ≤ J ≤ log(2m(T))/log q ≤ 2 log X/ log q ≤ 2(log X)^{1/4}, so (3/2)^d(3 + 2 log H)^d ≤ exp(2(log X)^{1/4} log(5 log X)) ≤ q^{ε/32} and (log X)^{1/2} ≤ q^{ε/32} for X ≥ X₀(ε), as log q ≥ (log X)^{3/4}. With 2/(H+1) ≤ 4q^{−ε/8} this gives N·D_N ≤ 4Nq^{−ε/8+ε/32} + C₆Nq^{−ε/4+ε/16} ≤ 3Nq^{−ε/16} for X ≥ X₀. ∎
+
+**Proof of Lemma W(a).** Since 2^{−J} ≥ exp(−2(log X)^{1/4} log 2) ≥ q^{−ε/64}, the error 3Nq^{−ε/16} of Claim 2 is at most ρ^d N q^{−ε/32}·(3q^{−ε/64}) ≤ ρ^d N q^{−η} for X ≥ X₀.
+
+*Case F ≥ q^ε.* Claim 2 with d = J and I = (T/2, T] gives B_q = ρ^J T/2 + θρ^J(T/2)q^{−η}.
+
+*Case F < q^ε.* Let φ(t) = m(t)/q^J, so φ(T) = F/2 and, by (W3), φ′(t) = m′(t)/q^J ∈ [m(T/2)/(2Tq^J), 6m(T)/(Tq^J)] ⊂ [F/(32T), 3F/T]. The set 𝒯 = {t ∈ (T/2, T] : {φ(t)} < ρ} is a union of at most F/2 + 2 intervals I_r, because φ increases by at most F/2 over the range. Every I_r other than possibly the first and the last is a full piece, of length between ρ·T/(3F) ≥ T/(6F) > Tq^{−ε}/8 and ρ·32T/F ≤ 32T/F; the complementary pieces have lengths between (1−ρ)T/(3F) and 32T/F. On any interval of length ≤ 32T/F the derivative φ′ varies by a factor 1 + O(1/F): indeed |φ″| = 2λaa′q/q^J and φ′ ≥ F/(32T), so the relative change is at most 2λaa′q·(32T/F)·32T/(F q^J) = 2^{11}λaa′qT²/(F²q^J) ≤ 2^{11}·9/(2F) by q^J = 2m(T)/F ≥ 2λaa′qT²/(9F). Pairing each full piece I_r with the following complementary piece gives |I_r| = ρ(|I_r| + |I′_r|)(1 + O(1/F)), and the two boundary pieces have total length ≤ 64T/F, so
+
+  |𝒯| = ρ·(T/2)·(1 + θ₁C₇/F),  C₇ = C₇(forms).
+
+Now B_q = Σ_r #{t ∈ I_r : ({m(t)/q^j})_{j≤J−1} ∈ [0,ρ)^{J−1}}. For the pieces of length ≥ Tq^{−ε}/8 (all full pieces, and boundary pieces when long) Claim 2 with d = J−1 gives ρ^{J−1}|I_r| + θ·3|I_r|q^{−ε/16}; a boundary piece shorter than Tq^{−ε}/8 contributes at most Tq^{−ε}/8 + 1 trivially, and 2(Tq^{−ε}/8 + 1) ≤ ρ^J(T/2)q^{−ε/2} since ρ^J ≥ 2^{−J} ≥ q^{−ε/64}. Summing,
+
+  B_q = ρ^{J−1}|𝒯| + O(Tq^{−ε/16}) = ρ^J(T/2)(1 + θ₁C₇/F) + O(Tq^{−ε/16}) = ρ^J(T/2)(1 + θ₁C₇/F + θ₂q^{−η}),
+
+for X ≥ X₀, using once more Tq^{−ε/16} ≤ ρ^J(T/2)q^{−η}. This is (a) with C₄ = C₇ (after adjusting constants). ∎
+
+**Proof of Lemma W(b).** Let J′ = ⌊(1−ε) log T/ log q⌋. Since q^{J′} ≤ T^{1−ε} and 2m(T) ≥ 2λaa′qT²/9 ≥ q·T^{1−ε} for large X, one has q^{J′+1} ≤ 2m(T) < q^L, so J′ ≤ L−2 ≤ J. The event y(t) ∈ 𝔅 implies ({m(t)/q^j})_{j≤J′} ∈ [0,ρ)^{J′}, i.e. m(t) mod q^{J′} ∈ S_{J′} := {Σ_{i<J′} d_i q^i : 0 ≤ d_i ≤ (q−1)/2}, a set of size ((q+1)/2)^{J′}. By (W1) the values m(t) mod q^{J′} run through ℤ/q^{J′} exactly once on each block of q^{J′} consecutive t, so
+
+  B_q ≤ (⌊(T/2)/q^{J′}⌋ + 1)·((q+1)/2)^{J′} ≤ ρ^{J′}·T/2 + q^{J′} ≤ ρ^{J′}·T/2 + T^{1−ε}. ∎
+
+**Lemma W′ (the second coin in the top regime, L = 3).** Let q | P(x) with 2|κ|·P(x)/q < q and q³ ≤ 2n, i.e. L = 3; assume q ≤ X^{2/3−ε}. The level-2 coin is decided by Lemma S and is the same for all x ≡ x_q (mod q). For the level-3 coin, #{t ∈ (T/2, T] : {m(t)/q²} < ρ} = ρ·T/2 + O(T(log X)^{3/2}(q^{−1/4} + q^{3/2}X^{−1})), hence it is tails for a proportion ½ + o(1) of the progression, uniformly in q: apply the one-dimensional (ET) with H = ⌊q^{1/4}⌋ to the phases e(h′m(t)/q²), q ∤ h′, bounded by (Wq) with Q = q and N = T/2, which gives |E_2| ≤ C₅T(2 log X)^{1/2}(q^{−1/2} + (2/T)^{1/2} + 2q^{1/2}/T); here q^{1/2}/T = q^{3/2}/X ≤ X^{−3ε/2}. The range q > X^{2/3−ε} within L = 3 has Σ 1/q = O(ε).
+
+**What Lemma W does not cover.** Primes in (X^{1/2−ε}, √(2|κ|·2aX)) (neither medium nor top; Σ 1/q = O(ε) + o(1)), primes q ≤ z₀ (removed by the residue class), primes with q² | P(x) or dividing two forms (Σ 1/q² and finitely many), and the o(1) sub-bucket F < C₀, which only enters through the C₄/F term.
+
+### 12.4 The first-moment theorem
+
+**Small primes.** The forms are admissible: for every prime q ≤ z₀ there is a class x₀ mod q avoiding all P_j, and for the primes dividing the λ's the class is chosen mod a higher power so that ν_q(∏(n−i)) is minimal and the digit at position ν_q + 1 of n is ≥ q/2 (for Theorem C: x even makes n odd and ν₂(n−1) = 1 ≤ popcount(n); for Theorem D: x ≡ 2 (mod 4)). Restrict to this class mod M.
+
+**Counting.** For x ≤ X in the class, n(x) ∉ E_k implies that some prime q > z₀ divides some P_j(x) and all coins at q are tails (primes with q² | P_j(x), or dividing two forms, contribute O(1/z₀) + o(1)). Hence
+
+  #{bad x} ≤ Σ_j Σ_{q > z₀} #{x : q | P_j(x), all coins tails} + O((1/z₀ + ε + o(1))X).
+
+Split by L. For L ≥ 4 and q ≥ exp((log X)^{3/4}), Lemma W(a) (summed over the dyadic ranges x ∈ (X/2^{r+1}, X/2^r]) gives per prime at most 2^{1−L}(1 + C₄/F(q) + q^{−η})·X/q. The primes with F(q) < C₀ form, inside the bucket L(q) = L, a range of ratio C₀^{1/(L−1)}, so their Σ 1/q is O(log C₀/ log X) = o(1); for the others the factor is 1 + O(1/C₀) + o(1), and C₀ → ∞ at the end. The primes z₀ < q < exp((log X)^{3/4}) contribute, by Lemma W(b), at most Σ_q (X/q)(ρ^{J′(q)} + T^{−ε}) ≤ X(log log X)·(0.51)^{(log X)^{1/4}/2} + o(X) = o(X), since (q+1)/(2q) ≤ 0.51 for q > 50 and J′(q) ≥ (log X)^{1/4}/2 there. Since Σ_{q : L(q) = L} 1/q = log((L+1)/L) + o(1), the medium regime contributes to the first moment
+
+  m := Σ_{L ≥ 4} 2^{1−L} log((L+1)/L) = 0.02789 + 0.01139 + 0.00482 + 0.00209 + 0.00092 + … = 0.0479 per form.
+
+For L ∈ {2, 3} write q = P_j(x)/c; the count of x ≤ X with P_j(x)/c prime in a fixed class mod a is, by the prime number theorem in progressions (fixed modulus a; c ≤ X^{1/2}, so the progression has length ≥ X^{1/2}), (1 + o(1))·aX/(φ(a)·c·log(aX/c)). The bad classes of c mod a have relative density f_j, and the weight Σ_c 1/(c log(X/c)) over c = X^v is ∫dv/(1−v): over v ∈ (0, 1/3) (L = 2) this is log(3/2) = 0.405, over v ∈ (1/3, 1/2) (L = 3, extra fair coin) it is ½log(4/3) = 0.144. So the top regime contributes f_j·0.549 per form. Altogether
+
+  M_∞ = 0.549·Σ_j f_j + 0.0479·#forms,   and   #{good x in the class} ≥ (1 − M_∞ − O(ε + 1/z₀) − o(1))·#{x in the class}.
+
+**Theorem C.** For n = (12x−1)(22x+9), n−1 = 2(11x−1)(12x+5): κ-values 130, −130 (pair 1) and 67, −67 (pair 2, λ = 2); f = (0, 1/5, 1/5, 0) (a = 12 and 12 have f = 0; for a = 22 and 11 one of the five square classes fails). M_∞ = 0.549·0.4 + 4·0.0479 = 0.411. Admissibility: a class mod each prime ≤ 23 avoiding all forms exists (`search2.admissible`), and four forms never cover all classes mod a prime ≥ 5. The leading coefficients 12, 22, 11, 12 are below √(2·264) = 23, so no form has the empty-coin regime of Remark (3). Since n ≍ x², #(E₁ ∩ [1,N]) ≫ N^{1/2}. For n = 2(12x+5)(35x+32), n−1 = (70x+29)(12x+11): f = (0, 1/6, 1/6, 0), M_∞ = 0.375; here 70 > √(2·840) = 41 and the form 70x+29 has the empty-coin regime, which costs only o(1). Brute force: 0.378 of x ≤ 2·10⁴ and 0.409 of x ≤ 10⁵ give n ∈ E₁ for this family.
+
+**Theorem D.** For n = (14x−1)(15x−1), n−1 = x(210x−29), n−2 = (6x−1)(35x+1): f = (1/3, 0, 0, 1/3, 0, 1/6), M_∞ = 0.549·(5/6) + 6·0.0479 = 0.457 + 0.287 = 0.745. The forms x and 210x−29 need q > 2k = 4 in 12.1, fine for q > z₀. The forms 210x−29 and 35x+1 exceed √(2·210) = 20.5 and have empty-coin regimes, again o(1). Admissible: `search2.admissible` finds a class mod each prime ≤ 23; six forms cannot cover ℤ/q for q ≥ 7.
+
+### 12.5 Classification of quadratic families
+
+Let n = λ₀P₁P₂ with κ = a₁b₂ − a₂b₁ and A = λ₀a₁a₂. The discriminant of n − i as a quadratic in x is (λ₀κ)² + 4Ai. So n − i splits over ℚ iff (λ₀κ)² + 4Ai is a square. For E₁ this is (s − λ₀κ)(s + λ₀κ) = 4A, finitely many (s, κ) per A. For E₂ one needs (λ₀κ)², s², v² in arithmetic progression with common difference 4A, i.e. (Euler) A = m²pq(p²−q²) and λ₀κ = ±m(p² − 2pq − q²). For E₃ one would need four squares in arithmetic progression, impossible (Fermat), as noted in §11. Given (λ₀, a₁, a₂, κ), the constants b₁, b₂ are determined up to the shift x ↦ x + t by a₁b₂ − a₂b₁ = κ, and f_j depends only on b_j mod a_j, hence is shift-invariant. `apsq.py` enumerates all families: for E₁ with A ≤ 3000 there are 93 121 families (10 964 admissible), minimum Σf_j = 1/3, attained by the second family of Theorem C; for E₂ with A ≤ 20 000 there are 4 964 families (146 admissible), minimum Σf_j = 5/6, attained by the family of Theorem D (and its sub-progressions). No admissible E₂ family in this range has Σf_j ≤ 0.8.
+
+### 12.6 Numerics
+
+Proportion of x with n(x) ∈ E₁ along n = (12x−1)(22x+9) (all x, no class restriction; `verify.py`, `sample.py`):
+
+| range of x | 1..2·10⁴ | [5·10⁵, 10⁶] | [5·10⁸, 10⁹] | [5·10¹¹, 10¹²] | [5·10¹⁴, 10¹⁵] |
+|---|---|---|---|---|---|
+| proportion in E₁ | 0.473 | 0.521 | 0.553 | 0.584 | 0.597 |
+| mean number of bad primes | — | 0.603 | 0.558 | 0.513 | 0.492 |
+
+The limiting first moment is 0.411; the finite-size excess comes from the windows q ∈ (√P, √(2|κ|P)) with κ = 130, 67, which shrink like 1/log x. For Theorem A's family (14x+3)(24x+17), Σf_j = 2/3 and the proportion is 0.448 at x ≤ 2·10⁴, 0.471 on [10⁵, 2·10⁵]; for (4x−1)(6x+1) with Σf_j = 1 it is 0.272.
+
+E₂ along n = (14x−1)(15x−1): proportion 0.165 (x ≤ 10⁴), 0.196 (x ≤ 10⁵), 0.238, 0.282, 0.320, 0.327 on the dyadic ranges at 10⁶, 10⁹, 10¹², 10¹⁵; mean number of bad primes 1.227, 1.085, 1.010, 0.964 against the limit 0.745. For comparison, random n of size 10¹² lie in E₁ with probability 0.016 and in E₂ with probability 0.003.
+
+Digit laws (`lawcheck.py`, x ∈ [5·10¹⁴, 10¹⁵], primes q ≥ 1000 with q ∥ P_j and log q/ log x < 0.45): the fraction of such q with no carry, by L, is 0.1216, 0.0588, 0.0283, 0.0144, 0.0079, 0.0031, 0.0022 for L = 4, …, 10, against 2^{1−L} = 0.125, 0.0625, 0.0313, 0.0156, 0.0078, 0.0039, 0.0020. For log q/ log P_j > 0.7 the no-carry fractions per form are (0, 0.174, 0.233, 0) against f = (0, 0.2, 0.2, 0); for the Theorem A family (0.297, 0, 0.311, 0) against (1/3, 0, 1/3, 0); for the E₂ family (0.392, 0, 0, 0.427, 0, 0.214) against (1/3, 0, 0, 1/3, 0, 1/6). In the window log q/ log P_j ∈ (0.6, 0.65) the fractions are (0, 0.119, 0.097, 0) against f/2 (`rulecheck.py`).
+
+### 12.7 Status and next steps
+
+- Proved here: Lemma S; Lemma W (12.3, with Lemma W′ for the second coin of the top regime); the first-moment theorem of 12.4; the classification 12.5. Theorems C and D therefore stand as stated, modulo the line-by-line check below.
+- Lemma W is proved in 12.3 from three named inputs: the Hensel bijection (W1), Weyl's inequality for quadratic exponential sums with an exact rational leading coefficient (Wq, with Vaughan's Lemma 2.2), and the Erdős–Turán–Koksma inequality (ET). The constants are chosen in the order ε, then z₀ and C₀, then X ≥ X₀(ε, forms). The bound M_∞ < 1 has margin 0.59 for E₁ and 0.25 for E₂.
+- Still to be checked line by line by a second reader: the constant bookkeeping in Claims 1–2 (all exponents are explicit: η = ε/32, H = ⌊q^{ε/8}⌋), the pairing argument for |𝒯| in Case F < q^ε, the uniformity of the prime number theorem in progressions used for the top regime (fixed modulus a, progressions of length ≥ X^{1/2}), and the o(1) accounting of the excluded windows in 12.4 (each is a range of primes with Σ 1/q = O(ε) or o(1)).
+- The same accounting improves with the degree: for a degree-d family (n − i = λ_i·∏ of d linear forms for i = 0..k) the top regime is L ≤ 2d−1 and its weight per form is Σ_{L=d+1}^{2d−1} 2^{2−L} log((L+1)/L) (0.223 for d = 3, 0.093 for d = 4), the medium weight is Σ_{L ≥ 2d} 2^{1−L} log((L+1)/L) (0.0085 for d = 3, 0.0019 for d = 4), and Lemma S extends verbatim (the digit is c·∏_{j≠1} κ_j/a^{d−1} mod q). Weyl's inequality for degree d replaces the quadratic case. So E₃ and E₄ would follow from any admissible family with n − i, 0 ≤ i ≤ k, splitting into linear forms over ℤ, provided Σf_j·(top weight) + (#forms)·(medium weight) < 1; for d = 3, k = 3 this is 0.223·Σf_j + 0.10 < 1, i.e. Σf_j < 4 out of a maximum of 12. Whether such linear-form families exist for k ≥ 3 is the question left by §11 (agent g6's E₃ and E₄ identities use irreducible quadratic pieces, to which Lemma S does not apply directly).
+- Not checked: the literature for Lemma S or for digit equidistribution of polynomial values at their own prime factors (Ford–Konyagin's treatment of n | C(2n,n) is the closest model).
