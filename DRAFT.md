@@ -571,6 +571,8 @@ E₂ along n = (14x−1)(15x−1): proportion 0.165 (x ≤ 10⁴), 0.196 (x ≤ 
 
 Digit laws (`lawcheck.py`, x ∈ [5·10¹⁴, 10¹⁵], primes q ≥ 1000 with q ∥ P_j and log q/ log x < 0.45): the fraction of such q with no carry, by L, is 0.1216, 0.0588, 0.0283, 0.0144, 0.0079, 0.0031, 0.0022 for L = 4, …, 10, against 2^{1−L} = 0.125, 0.0625, 0.0313, 0.0156, 0.0078, 0.0039, 0.0020. For log q/ log P_j > 0.7 the no-carry fractions per form are (0, 0.174, 0.233, 0) against f = (0, 0.2, 0.2, 0); for the Theorem A family (0.297, 0, 0.311, 0) against (1/3, 0, 1/3, 0); for the E₂ family (0.392, 0, 0, 0.427, 0, 0.214) against (1/3, 0, 0, 1/3, 0, 1/6). In the window log q/ log P_j ∈ (0.6, 0.65) the fractions are (0, 0.119, 0.097, 0) against f/2 (`rulecheck.py`).
 
+Direct test of Lemma W (`code/h2/lemmaW_test.py`, X = 2·10⁷, piece 12x−1): for every prime q in [1000, 1400] (L = 5, F between 60 and 200), [4000, 4100] (L = 4, F ≈ 800) and [300, 330] (L = 6), the exact count B_q of t ∈ (T/2, T] with all coins tails agrees with ρ^J·T/2 to within the Poisson noise of counts of size 300–1000 (deviations ≤ 8%). For q ∈ [2000, 2150], where F ≈ 5–6.5, the deviations are systematically negative, −2% to −22%, as allowed by the C₄/F term of Lemma W(a).
+
 ### 12.7 Status and next steps
 
 - Proved here: Lemma S; Lemma W (12.3, with Lemma W′ for the second coin of the top regime); the first-moment theorem of 12.4; the classification 12.5. Theorems C and D therefore stand as stated, modulo the line-by-line check below.
