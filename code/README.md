@@ -25,7 +25,7 @@ Every claim in [../DRAFT.md](../DRAFT.md) that rests on computation is backed by
 | `g5/` | §11 | linear-form families: Lemma Q, Theorems A (E₁) and B (E₂) under Dickson | `final_check.py` → `final_check_out.txt` |
 | `g6/` | §11, §12.7 | search for E₃/E₄ polynomial families (quartic/cubic routes, composition); found identities use irreducible quadratic pieces, not yet written up in DRAFT | `check.py`, `final_e3.py`, `e4final.py` |
 | `h1/` | §12 | **unconditional Theorems C/D**: family search and classification, Lemma S and digit-law tests, brute-force proportions | `search2.py`, `apsq.py`, `verify.py`, `detect.py` |
-| `h2/` | §13.2 | cubic/quartic families with many split fibers: Cardano/Eisenstein enumeration of all split cubic fibers per norm (`torus_ap.py`, no 4-term progression or ratio-3 pair to height 300), rational-point grouping (`cubic_ap_rat.py`), quartic e₄ groups (`pte4*.py`), test of a Lemma S′ variant | `torus_ap.py` |
+| `h2/` | §13.2 | cubic/quartic families with many split fibers: Cardano/Eisenstein enumeration of all split cubic fibers per norm (`torus_ap.py`, no 4-term progression or ratio-3 pair to height 300), rational-point grouping (`cubic_ap_rat.py`), quartic e₄ groups (`pte4*.py`), test of a Lemma S′ variant, factor structure of the minimal elements a(k) (`a375077.py`) | `torus_ap.py` |
 
 ## Key result → script
 
