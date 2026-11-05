@@ -42,7 +42,7 @@ Section numbers refer to [DRAFT.md](DRAFT.md). Code paths are relative to `code/
 | Theorem W (near-Lehmer T = 2) | PROVED; 9365 + 4110 checks | §9.2 | `g1/` |
 | NL(P) existence | OPEN; Lehmer-strength, likely harder than G | §9.4 | `g1/search.py`, `g1/heur.py` |
 | Peak lemma (|Ψ_m| at q-th roots of unity) | PROVED | §9.5 | `g2/peak.py` |
-| Conjecture G | OPEN; ~50% of eligible m good empirically | §9 | — |
+| Conjecture G | OPEN; 17 good / 14 bad among squarefree odd m ≤ 6000 with m/φ ≥ 2; top-goodness depends only on rad(m); the first exponent with two levels, m₁ = 111546435, is top-bad at both levels (exact, six-prime CRT) | §9, §13.7 | `h2/toppiece_scan.py`, `h2/toppiece_T3.py` |
 | Lemma Q | PROVED | §11 | `g5/` |
 | Lemma S (square-class rule) | PROVED; 3568/3568, 5696/5696 checks at x ≈ 10¹⁵ | §12.2 | `h1/detect.py` |
 | Lemma W (medium primes equidistribution) | PROVED | §12.3 | `h1/lawcheck.py` |

@@ -684,3 +684,21 @@ So Erdős's question is exactly whether G (up to bounded primes) contains string
 - The first obstruction inside G is already the smoothness: m ∈ G forces P⁺(m) ≤ √(2m). Strings of k+1 consecutive √(2m)-smooth integers are not known to exist for any k ≥ 1 by sieve or stability methods (Hildebrand's consecutive smooth numbers need P⁺(m(m+1)) ≤ m^θ with θ > e^{−1/2} = 0.6065). Polynomial families are the only known device producing them, and §13.2 shows they come with linear pieces only up to k = 2.
 
 In this language §12 says: the set of x with (12x−1)(22x+9) and (12x−1)(22x+9) − 1 both in G has positive density, and likewise for three consecutive members along (14x−1)(15x−1). The random model for G (independent Poisson–Dirichlet anatomies of consecutive integers) predicts that G contains strings of every length with density c₁^{k+1}; the minimal elements a(k) of E_k (A375077) grow like 10^{k+1}, consistent with this.
+
+### 13.7 The top piece: a palindromy identity, the radical, and the first exponent with three levels
+
+For the top piece Φ_{2m} of x^m + 1 (m odd), §4 says level s (1 ≤ s ≤ T − 1, T = ⌊m/φ(m)⌋) carries iff the first nonzero coefficient c_N of Φ_{2m}(t)^{−(s+1)} with N > E_s = m − (s+1)φ(m) is negative. Since Φ_{2m}(t)^{−1} = R(t)/(1 + t^m) with R(t) = (t^m+1)/Φ_{2m}(t) = −Ψ_m(−t) (Ψ_m the inverse cyclotomic polynomial, of degree m − φ(m)), one has c_N = [t^N]R(t)^{s+1} for N < m, and by palindromy of R
+
+  c_{E_s+1} = [t^{E_s+1}] R^{s+1} = [t^{sm−1}] R^{s+1} = ±[y^{m−(s+1)φ(m)+1}] Ψ_m(y)^{s+1}.
+
+So the whole top-piece question is about the coefficients of powers of Ψ_m just above the index m − (s+1)φ(m), i.e. just below the multiples sm of m in the mirrored indexing. The calibration against §6.4 fixes the sign: for `code/h2/toppiece_T3.py` and `toppiece_scan.py` the reported c is negative exactly for the good exponents 165 (c = −1), 195 (−4) and positive for 105 (+3).
+
+**Scan (`toppiece_scan.py`).** Among the 64 odd m ≤ 6000 with m/φ(m) ≥ 2 (all have T = 2, one level): if m is not squarefree the first nonzero coefficient beyond E₁ equals that of the radical (315 → +3 like 105, 495 → −1 like 165, 3465 → +263 like 1155, 4095 → −75 like 1365), so top-goodness is a property of rad(m). Among the 32 squarefree ones: 17 good (165, 195, 1365, 1995, 2145, 2415, 3255, 3315, 3795, 3927, 4305, 4515, 4641, 4785, 5115, 5565, 5865), 14 bad (105, 1155, 1785, 2805, 3003, 3045, 3135, 3705, 3885, 4389, 4485, 4845, 4935, 5655) and one (5313) with coefficient 0 at the first index (c = +1 at the next). The sign shows no visible dependence on m/φ(m) or on μ(m).
+
+**The first exponent with two levels.** The smallest odd m with T ≥ 3 is m₁ = 3·5·7·11·13·17·19·23 = 111546435 (m₁/φ = 3.056). Its two decisive coefficients were computed exactly (six-prime CRT, strided passes over the 256 divisors, FFT with 11-bit splitting for the cube; `toppiece_T3.py`):
+
+  level 1: [y^{38555716}] Ψ² = +1.11468…·10²⁸,  level 2: [y^{2060356}] Ψ³ = +2.09706…·10³⁹.
+
+Both positive: m₁ is top-bad at both levels. So the heuristic "many levels make the top piece good" fails at the first opportunity, and the next candidates (m₁·29, m₁·31, …, with T = 3 and m ≈ 3·10⁹) need series of length ≈ 10⁹, beyond this session. For Conjecture G this means that even exponents with φ(m)/m well below 1/2 must be checked one by one; no monotonicity in T is available.
+
+**Consequence for the Dickson route.** Nothing changes in the logical status (H + G ⇒ all k), but the data say G is a statement about specific huge integers with no parametric handle: the two-scale formula (§6.3) shows goodness along m₀·r is that of the core m₀, the radical determines the sign, and the first core with three levels is bad.
