@@ -14,7 +14,7 @@ Section numbers refer to [DRAFT.md](DRAFT.md). Code paths are relative to `code/
 | Theorem B: E₂ via a 6-tuple | COND | Dickson, one admissible 6-tuple | §11 | `g5/`, `g/verify_g5.py` |
 | Theorem 1: E₁ via exponents (123, 59814755) | COND | Schinzel H for 133 polynomials; finite computation done exactly | §8 | `aur/`, `g4/`, `g/top_exact.py` |
 | Theorem 2: E_k infinite ∀k | COND | H + Conjecture G | §9 | `g1/`, `g2/`, `g3/` |
-| E_k infinite for k ≥ 3 | OPEN | quadratic families impossible (Fermat); need degree ≥ 3 | §11, §12.7 | `g6/`, `h2/` |
+| E_k infinite for k ≥ 3 | OPEN | first-moment method needs linear pieces; linear-piece families stop at k = 2 (Fermat, Yuzvinsky, cubic/quartic searches); route via E₂ family + irreducible quadratic members needs Hypothesis BH_u and a Ford–Konyagin-type analysis | §13 | `g6/`, `h2/` |
 
 ## Supporting lemmas
 
@@ -61,5 +61,5 @@ Section numbers refer to [DRAFT.md](DRAFT.md). Code paths are relative to `code/
 
 1. Second reader for §12.3–12.4: constant bookkeeping in Claims 1–2 (η = ε/32, H = ⌊q^{ε/8}⌋), pairing argument for |𝒯| in Case F < q^ε, uniformity of PNT in progressions for the top regime, o(1) accounting of excluded prime windows.
 2. Literature search for Lemma S, Theorems A–D, and digit equidistribution of polynomial values at their own prime factors.
-3. E₃ / E₄: admissible degree-d family with every n − i (0 ≤ i ≤ k) splitting into linear forms over ℤ and Σf_j·(top weight) + (#forms)·(medium weight) < 1 (for d = 3, k = 3: Σf_j < 4). Agent g6's E₃/E₄ identities use irreducible quadratic pieces, to which Lemma S does not apply directly.
+3. E₃ / E₄: no linear-piece family is expected (§13.2). Either prove the cubic four-term progression impossible, or carry out the §13.3 program: Ford–Konyagin-type density for the irreducible members n − i (i ≥ 3) of an E₂ family under Hypothesis BH_u (Bateman–Horn uniform in the cofactor).
 4. (Conditional route, lower priority) Conjecture G; exact recheck of the `fastser.py`-based counts.

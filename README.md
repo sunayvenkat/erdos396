@@ -53,7 +53,7 @@ By Kummer, ν_q(C(2n,n)) is the number of carries when adding n + n in base q. F
 
 - Independent line-by-line check of §12.3–12.4 (constants in Claims 1–2, pairing argument for |𝒯|, PNT-in-progressions uniformity, o(1) bookkeeping).
 - Literature check: are Lemma S / Theorems A–D already known?
-- E₃: find an admissible family with n − i (i = 0..3) splitting into **linear** forms of degree d ≥ 3, with Σf_j < 4 for d = 3 (§12.7). Search code: `code/g6/`, `code/h2/`.
+- E₃: linear-piece families are not expected to exist for k ≥ 3 (§13: Fermat, Yuzvinsky's pencil bound, cubic search via Cardano/Eisenstein parametrization in `code/h2/torus_ap.py`). The open route is §13.3: Ford–Konyagin-type density for the irreducible quadratic members of an E₂ family under Hypothesis BH_u.
 
 ## Scope note
 
