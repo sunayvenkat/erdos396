@@ -617,6 +617,8 @@ Let P be a piece of degree e ≥ 2 in a family of degree L with every piece of d
 
 **One variable, degree 4.** For f = X⁴ + pX² + qX + r the factorization f − c = (X² + sX + t)(X² − sX + u) forces t, u = (p + s² ∓ q/s)/2, and both quadratics split iff −(s³ + 2ps ± 2q)/s are squares, i.e. iff s is the common abscissa of rational points on the two elliptic quartics y² = −s⁴ − 2ps² − 2qs and y² = −s⁴ − 2ps² + 2qs. For fixed (p, q) this is a curve of genus 5, so a quartic has finitely many completely split fibers. Agent g6's parametrization makes the two progression conditions linear in (p, q²); a four-term progression of completely split fibers then needs nine rational squares on a four-parameter family, and `code/g6/irr_count.py` found none with small parameters.
 
+**Norm-form pieces are excluded too, and they are exactly the countable ones.** Yuzvinsky's theorem is a statement over ℂ, and so is the composite-case argument above, so both apply verbatim when the pieces are only required to split into linear factors over ℚ̄. In particular, for k ≥ 3 there is no non-univariate family whose pieces are products of norm forms N_K(ℓ(x)) of affine-linear maps ℓ : ℚ^r → K. These are precisely the pieces with full level of distribution. If ℓ(ℤ^r) has full rank in O_K (d = [K:ℚ] ≤ r), an ideal 𝔮 gives the lattice ℓ^{−1}(𝔮), and every nonzero α ∈ 𝔮 has max_σ |σ(α)| ≥ N𝔮^{1/d} because |N(α)| ≥ N𝔮. So all successive minima are ≍ N𝔮^{1/d}, and #{x in a box of side Y : 𝔮 | ℓ(x)} = vol/N𝔮 + O((Y/N𝔮^{1/d})^{d−1} + 1) holds uniformly up to N𝔮 ≈ Y^d, the size of the piece. For an absolutely irreducible piece F of degree e ≥ 2 in m variables, counting F ≡ 0 (mod q) through complete exponential sums (Deligne) controls a single q only up to q ≈ Y^{2m/(m+2)} < Y² ≤ Y^e, and above that level the anatomy problem of 13.1 returns. So the analytic barrier of 13.1 and the algebraic barrier here are the same barrier. Pieces linear enough to be counted up to their own size are linear enough over ℚ̄ for Yuzvinsky's bound to apply.
+
 ### 13.3 The program for k ≥ 3
 
 Fix the E₂ family n(x) = (14x−1)(15x−1) (any E₂ family will do) and k ≥ 3. For 3 ≤ i ≤ k the member Q_i(x) = n(x) − i is an irreducible quadratic (a fourth square in the progression of discriminants is impossible). The members n, n−1, n−2 are handled by §12. For Q_i the following is unconditional:
@@ -699,6 +701,38 @@ So the whole top-piece question is about the coefficients of powers of Ψ_m just
 
   level 1: [y^{38555716}] Ψ² = +1.11468…·10²⁸,  level 2: [y^{2060356}] Ψ³ = +2.09706…·10³⁹.
 
-Both positive: m₁ is top-bad at both levels. So the heuristic "many levels make the top piece good" fails at the first opportunity, and the next candidates (m₁·29, m₁·31, …, with T = 3 and m ≈ 3·10⁹) need series of length ≈ 10⁹, beyond this session. For Conjecture G this means that even exponents with φ(m)/m well below 1/2 must be checked one by one; no monotonicity in T is available.
+Both positive: m₁ is top-bad at both levels, so having many levels does not by itself make the top piece good. (The values ≈ 1.1·10^18 in `code/agentAC/bigm_111546435_L*.txt` were reduced modulo a single 63-bit modulus; their signs agree.) Its multiples m₁·r, which need series of length ≈ m₁r, are settled for every prime r in §13.8 by a sampled-convolution identity: about 65 % of the r up to 3φ(m₁) give a top-good m₁r.
 
 **Consequence for the Dickson route.** Nothing changes in the logical status (H + G ⇒ all k), but the data say G is a statement about specific huge integers with no parametric handle: the two-scale formula (§6.3) shows goodness along m₀·r is that of the core m₀, the radical determines the sign, and the first core with three levels is bad.
+
+### 13.8 Multiplying by one prime: a sampled convolution, and the complete picture along m₁·r
+
+**Proposition (sampled convolution).** Let m₀ be odd, φ₀ = φ(m₀), e ≥ 2 with δ = m₀ − eφ₀ ≥ 0, and β_M = [y^M] Φ_{m₀}(y)^e (a palindromic polynomial of degree eφ₀). For an odd prime r ∤ m₀ put m = m₀r and define the level-(e−1) window coefficients
+
+  w_m(t) = [y^{K_m + t}] Ψ_m(y)^e = (−1)^e [y^{K_m + t}] Φ_m(y)^{−e},  K_m = m − eφ(m) + 1, t ≥ 0,
+
+so that the top piece of m carries at level e − 1 iff the first nonzero w_m(t) is negative (§13.7). Then
+
+  w_{m₀r}(t) = Σ_{j ≥ 1, t+1 ≤ rj ≤ eφ₀+1+t} w_{m₀}(j−1) · β_{rj−1−t}.
+
+*Proof.* Φ_{m₀r}(y) = Φ_{m₀}(y^r)/Φ_{m₀}(y) gives Φ_m^{−e} = Φ_{m₀}(y)^e · Φ_{m₀}(y^r)^{−e}, so [y^N]Φ_m^{−e} = Σ_a [u^a]Φ_{m₀}^{−e} · β_{N−ra}. Here K_m = rδ + eφ₀ + 1 because φ(m) = φ₀(r−1). For N = K_m + t the index N − ra = r(δ − a) + eφ₀ + 1 + t lies in [0, eφ₀] exactly when a = δ + j with t + 1 ≤ rj ≤ eφ₀ + 1 + t. Palindromy gives β_{eφ₀+1+t−rj} = β_{rj−1−t}, and (−1)^e [u^{δ+j}] Φ_{m₀}^{−e} = w_{m₀}(j−1). ∎
+
+**Consequences.**
+- *Inflation.* For r > eφ₀ + 1 only j = 1 survives. The first nonzero term is at t = r − 1 − eφ₀, with value w_{m₀}(0)·β_{eφ₀} = w_{m₀}(0). So m₀r inherits the level-(e−1) sign of m₀ (this recovers §9.1).
+- *One-term range.* For (eφ₀ + 2)/2 < r ≤ eφ₀ + 1 one has w_{m₀r}(t) = w_{m₀}(0)·β_{r−1−t}. So the level sign of m₀r is sign(w_{m₀}(0)) times the sign of the first nonzero coefficient of Φ_{m₀}^e at or below index r − 1. Along a prime multiplier, top-goodness therefore becomes the question of which signs the coefficients of a cyclotomic power take at the positions p − 1.
+- *Cost.* One pass over Φ_{m₀}^e and the window of m₀ gives w_{m₀r}(0), w_{m₀r}(1), … for every prime r at once, at total cost Σ_r eφ₀/r ≈ eφ₀ log log φ₀ per CRT prime. This replaces series of length ≈ m₀r.
+
+`code/h2/toppiece_rscan.py` implements this. It was checked against the exact series (python integers, no modulus) for every prime r with m₀r < 20000 and m₀ ∈ {105, 165, 195, 1365}: all signs, offsets and values agree, including the list 1155 (+263), 1365 (−75), … of §13.7.
+
+**The first exponent with three levels, all multipliers.** Take m₀ = m₁ = 3·5·7·11·13·17·19·23 (φ₀ = 36 495 360). Every m₁r has T = 3, since 3 < m₁r/φ(m₁r) ≤ 3.166, so it has two levels. Both levels were computed for every prime r ≥ 29 up to the inflation bound, with twelve CRT primes (range 10^111). The largest |w| was 10^84 at level 2 and 10^57 at level 1, and no first coefficient vanished.
+
+| | primes r | level carries |
+|---|---|---|
+| level 2 (e = 3), 29 ≤ r ≤ 3φ₀ + 1 | 6 275 473 | 3 153 678 (50.3 %) |
+| level 1 (e = 2), 29 ≤ r ≤ 2φ₀ + 1 | 4 283 547 | 2 137 216 (49.9 %) |
+
+- The level-2 fraction is 0.497–0.507 in each of the ranges [29, 10³), …, [10⁷, 3φ₀/2), [3φ₀/2, 3φ₀]. In the one-term range it is decided by sign β_{r−1}, since w_{m₁}(0) > 0.
+- Top-good (some level carries): 72.7 % of the r ≤ 2φ₀ + 1, against 75 % for independent fair levels. The correlation between the two level signs is 0.098. For 2φ₀ + 1 < r ≤ 3φ₀ + 1 it is 50.0 %, because level 1 inherits m₁'s bad sign. For r > 3φ₀ + 1 it is 0 %, because both levels inherit. Overall 4 109 232 of the 6 275 473 primes up to 3φ₀ + 1 give a top-good m₁r.
+- r = 29: both levels carry, with level-2 value −7.34·10^72 (confirmed by ten-prime CRT, `toppiece_m1r_x4.py`; a six-prime run had wrapped). r = 31: level 2 only (−1.83·10^67). The first top-bad multipliers are 37, 67, 83, 89, 103.
+
+**What this does and does not give.** The top piece is not the obstruction to Conjecture G. From any exponent m₀ with T ≥ 2, about half of the multipliers r ≤ eφ₀ (three quarters when two levels are live) make the top piece good. Which ones they are is decided by the signs of Φ_{m₀}^e at r − 1, which look like fair coins. But G(P) needs a good m with every prime factor > P. Multiplying by r keeps the small primes of m₀ and does not raise T, so the expensive step is still producing m₀ with all primes > P and m₀/φ(m₀) ≥ 2 (size about e^{P²}). The non-top pieces of m₀r are also untouched by this section. A proof of G along these lines would need (i) a prime r in (φ₀, 2φ₀] with Φ_{m₀}² having a coefficient of prescribed sign at index 2φ₀ + 1 − r (a "primes in a sign set" statement for cyclotomic coefficients), and (ii) control of the pieces dr, d | m₀, d < m₀, which obey the same sampled convolution with Φ_{2d}-data. Neither is available.
