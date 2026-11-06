@@ -746,3 +746,24 @@ The rule was checked against the exact series for all 388 primes r in the one-te
 The reason is that Φ_{m₀}² ≡ (1 − y)^{2μ} ∏_{p | m₀} (1 − y^p)^{−2μ} below p₁p₂, and this series is positive-dominated as soon as p₁ is moderately large. The only negative coefficients there are β_{p+1} = −4 for p | m₀, p < 2p₁ − 1, when μ = +1. So multipliers near the end of the one-term range preserve the top sign, just as multipliers beyond it do (inflation). Sign changes happen only for r deep inside the range, where β is not explicit. For m₁, whose primes start at 3, the coefficients oscillate early, which is why §13.8 sees 50 %.
 
 **(b) Giving the irreducible member norm-form factors by parametrizing x.** In the E₂ family (14x − 1)(15x − 1), the member n − 3 = Q(x) = 210x² − 29x − 2 is, up to constants, N_{K/ℚ}(420x − 29 + √2521) with K = ℚ(√2521). Writing 420x − 29 + √2521 = βγ with β = a + b√D, γ = c + d√D forces ad + bc = 1. So x is parametrized by a coset of a congruence subgroup of SL₂(ℤ), and Q(x) becomes the product of the two binary norm forms a² − Db² and c² − Dd², each with full level of distribution in its own row. But x = (ac + Dbd + 29)/420 is then a rank-4 quadratic form in the entries, and every formerly linear piece (14x − 1, x, 6x − 1, …) becomes an absolutely irreducible quaternary quadric. For those, the available equidistribution (spectral gap for SL₂(ℤ) in congruence classes, or the affine sieve) gives only a small power of the number of points, far below their size. The level has moved from the linear pieces to Q, not increased. This is forced by the remark in §13.2: if every piece split over ℚ̄ after the substitution, the four members would be completely reducible fibers of a non-univariate pencil over ℂ, contradicting Yuzvinsky.
+
+### 13.10 A closed trace formula for the top coefficient, and why it does not decide the sign
+
+Let c(m) = [y^{m-1}] Φ_m^{-2} be the level-1 top coefficient of §13.7. Expanding Φ_m^{-2} in partial fractions and using Φ_m·Ψ_m = y^m − 1, one gets the exact formula
+
+  c(m) = (1/m²) Σ_{ζ primitive m-th root} ζ Ψ_m(ζ)² [ (2m − 1) − 2 ζ Ψ_m'(ζ)/Ψ_m(ζ) ],
+
+with Ψ_m(ζ) = ∏_{e|m, e<m} (ζ^e − 1)^{−μ(m/e)}. Every factor is explicit in terms of sines and cotangents of πa/d over the divisors d of m.
+
+Check (`code/h2/trace_top.py`). The formula reproduces the series value exactly for m = 105, 165, 195, 1155, 1365, 3003, 15015 and 19635. The imaginary parts are at most 10^{-6}.
+
+Why it does not decide the sign. The plan was to read sgn c(m) off a few dominant roots ζ_a for structured huge m. The sum is not concentrated.
+
+| m | share of Σ|term| in the top 2 | in the top 10 |
+|---|---|---|
+| 105 | 0.222 | 0.706 |
+| 1365 | 0.178 | 0.516 |
+| 15015 | 0.124 | 0.397 |
+| 19635 | 0.192 | 0.571 |
+
+The top-10 share falls with m. The value c(m) comes from cancellation among φ(m) terms of comparable size, which is the same equidistribution behaviour seen in §13.7–13.8. A sign certificate would need an equidistribution statement for the phases arg(ζ_a Ψ_m(ζ_a)²) that is uniform in m. That is a question about cyclotomic values of the same difficulty as the coefficient question itself. The formula is still useful as an O(φ(m)·τ(m)) floating-point evaluator, independent of the series, for m too large for the power-series method. The sign is reliable when |c(m)| is well above the accumulated rounding error.
