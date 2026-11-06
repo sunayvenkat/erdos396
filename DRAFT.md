@@ -767,3 +767,36 @@ Why it does not decide the sign. The plan was to read sgn c(m) off a few dominan
 | 19635 | 0.192 | 0.571 |
 
 The top-10 share falls with m. The value c(m) comes from cancellation among φ(m) terms of comparable size, which is the same equidistribution behaviour seen in §13.7–13.8. A sign certificate would need an equidistribution statement for the phases arg(ζ_a Ψ_m(ζ_a)²) that is uniform in m. That is a question about cyclotomic values of the same difficulty as the coefficient question itself. The formula is still useful as an O(φ(m)·τ(m)) floating-point evaluator, independent of the series, for m too large for the power-series method. The sign is reliable when |c(m)| is well above the accumulated rounding error.
+
+### 13.11 Peak dominance in the trace formula for exponents with every prime ≡ ±3 (mod 8)
+
+This section is numerical evidence and a heuristic mechanism, not a proof.
+
+**Setting.** Take m odd and squarefree with every prime p | m satisfying p ≡ ±3 (mod 8), that is χ₈(p) = −1 for the even character χ₈ mod 8. By the Peak lemma (§9.5), |Ψ_m| has a doubly exponential peak at the primitive 8th roots of unity. In the trace formula of §13.10 the sum runs over primitive m-th roots ζ_a. Reparametrize by c ≡ 8a (mod m), so a ≡ c·8⁻¹ (mod m). Then for every d | m, exactly,
+
+  a/d ≡ c(1 − d²)/(8d) (mod 1),
+
+because 8·(1 − d²)/8 ≡ 1 (mod d). For |c| ≪ d this is −cd/8 + O(|c|/d). Expanding log|2 sin πx| on odd residues mod 8 as ¼ log 2 − B₈χ₈(x), with B₈ = ½ log(1+√2), gives the skeleton
+
+  log R_a ≈ ¼ log 2 + B₈ χ₈(c)(2^r − 1),  r = ω(m),
+
+up to corrections of size O(|c|·Σ_{d|m} 1/d). So the dominant terms are the units c ≡ ±1 (mod 8) of small absolute value. They exceed every other class by a factor of about exp(4B₈·2^r).
+
+**Observation.** The largest terms sit exactly where predicted. For m = 40755 and m = 43730115 the six largest terms have 8a mod m ∈ {7, −1, 23, 31, 47, 71, 79}. That is c ≡ ±1 (mod 8) of small absolute value, avoiding c with a factor in common with m. In both cases the partial sums, taken in decreasing order of size, have the sign of c(m) from the first term on (`code/h2/trace_peak.py`).
+
+**Single-term sign prediction.** Here is how often the sign of the largest term equals sgn c(m). The family is all such m with m/φ(m) ≥ 2. The exact series is used for m ≤ 2·10⁵, for r = 7, and the float trace sum otherwise (`code/h2/trace_peak_scan.py`, `code/h2/peak_r7.py`; raw output `peak_scan.txt`, `peak_r7.txt`).
+
+| r = ω(m) | m in family | largest term predicts sign | mean share of Σ|term| in largest term | top-good |
+|---|---|---|---|---|
+| 4 | 85 (m ≤ 3·10⁶) | 41 (chance level) | 0.06 | 14 |
+| 5 | 705 (m ≤ 3·10⁶) | 619 (88 %) | 0.11 | 402 |
+| 6 | 9 (m ≤ 3·10⁶) | 9 | 0.45 | 4 |
+| 7 | 8 (m ≤ 8·10⁷), exact six-prime CRT | 8 | 0.47–0.49 | 4 |
+
+At r = 7 the float trace sum also agrees with the exact sign in all 8 cases. The top-good m are 43730115, 62640435, 72095595 and 79920555. The bad ones are 50821485, 64841205, 69731805 and 79186965. Accuracy and concentration rise with r, as the exp(4B₈·2^r) gap predicts.
+
+**What this would give, and what is missing.**
+- If the peak band dominates, then sgn c(m) is the sign of an explicit expression. It depends on m mod 16, on τ = m/φ(m) through the phase θ_a/2π ≡ −cm/8 − c/(8τ) + c/(8m), and on the Euler products ∏_{p|m}(1 − χ(p)/p) for the odd characters χ₋₄ and χ₋₈ mod 8, which enter through S_a. That would turn the top-piece part of Conjecture G into choosing primes ≡ ±3 (mod 8) above P with these residues and products prescribed. The non-top (Band) pieces of §9.3 would still have to be handled separately.
+- Gap 1 (bulk). A rigorous bound log R_a ≤ (1 − ε)B₈·2^r for all a off the peak band. This is the open item of §9.5. The trivial bound is useless, and the sums Σ_{d|m} μ(d)e(na/d) have no product structure.
+- Gap 2 (band width). The tested m have small primes (3, 5, 11, …). When every prime exceeds P, the skeleton holds for all |c| ≪ P. Then many terms c ≡ ±1 (mod 8) have nearly equal size, with log R drifting linearly in |c| at a rate set by the two Euler products. Their phases rotate by about −1/τ ≈ −½ turn per step of 8 in c. So single-term dominance is not expected for large P. The sign would come instead from a two-sided, nearly geometric sum whose closed form has not been worked out or tested.
+- Untested: whether the 88 % at r = 5 rises to 100 % for every r ≥ 6, beyond the 17 cases above.
